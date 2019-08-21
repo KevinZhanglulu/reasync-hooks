@@ -1,14 +1,11 @@
-import { asyncFulfilledActionTypeCreator } from "./asyncActionTypeCreators";
+import { asyncFulfilledActionTypeCreator } from "./actions/asyncActionTypeCreators";
 import { useIsAsyncPendingSelector } from "./hooks/useIsAsyncPedningSelector";
 import { asyncStateReducer } from "./reducers/asyncStateReducer";
 import { asyncErrorReducerCreator } from "./reducers/asyncErrorReducerCreator";
 import { asyncReduxMiddlewareCreator } from "./asyncReduxMiddlewareCreator";
-import { onAsyncStateHookCreator } from "./hooks/onAsyncStateHookCreator";
-import { asyncActionCreator } from "./asyncActionCreator";
-import { FULFILLED, REJECTED } from "./constant";
-
-const useOnAsyncFulfilled = onAsyncStateHookCreator(FULFILLED);
-const useOnAsyncRejected = onAsyncStateHookCreator(REJECTED);
+import { asyncActionCreator } from "./actions/asyncActionCreator";
+import { useOnAsyncFulfilled } from "./hooks/useOnAsyncFulfilled";
+import { useOnAsyncRejected } from "./hooks/useOnAsyncRejected";
 
 export {
   asyncErrorReducerCreator,

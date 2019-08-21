@@ -1,4 +1,4 @@
-import { FULFILLED, REJECTED, PENDING } from "./constant";
+import { FULFILLED, REJECTED, PENDING } from "../utils/constant";
 
 export const asyncFulfilledActionTypeCreator = (type: string): string =>
   `${type}_${FULFILLED}`;

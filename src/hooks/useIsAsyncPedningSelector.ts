@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { PENDING } from "../constant";
+import { PENDING } from "../utils/constant";
 
 export const createPendingSelector = (actionTypes: string[]) => (state: any) =>
   actionTypes.some(actionTypes => {

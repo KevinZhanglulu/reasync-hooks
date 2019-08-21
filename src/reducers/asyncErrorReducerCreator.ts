@@ -1,5 +1,5 @@
-import { REJECTED } from "../constant";
-import { Reducer } from "../reduxTypes";
+import { REJECTED } from "../utils/constant";
+import { Reducer } from "../utils/reduxTypes";
 
 export const asyncErrorReducerCreator = (originReducer: Reducer): Reducer => (
   state = {},
