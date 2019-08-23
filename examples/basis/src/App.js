@@ -1,5 +1,3 @@
-import("antd/dist/antd.css");
-import "./App.css";
 import React from "react";
 import { applyMiddleware, combineReducers, createStore ,compose} from "redux";
 import {
@@ -12,6 +10,8 @@ import {
 } from "react-redux-async-hooks";
 import { Provider, useDispatch } from "react-redux";
 import { Button,message } from "antd";
+import("antd/dist/antd.css");
+import ("./App.css");
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
