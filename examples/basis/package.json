@@ -1,34 +1,21 @@
 {
-  "name": "react-redux-async-hooks-example",
+  "name": "react-redux-async-hooks-antd",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/classnames": "^2.2.9",
-    "@types/jest": "24.0.18",
-    "@types/node": "12.7.2",
-    "@types/react": "16.9.2",
-    "@types/react-dom": "16.9.0",
-    "classnames": "^2.2.6",
+    "antd": "^3.22.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.0",
     "react-redux-async-hooks": "^0.0.1-alpha.3",
     "react-scripts": "3.1.1",
-    "react-transition-group": "^4.2.2",
-    "redux": "^4.0.4",
-    "typescript": "3.5.3",
-    "@types/react-redux": "^7.1.2",
-    "@types/react-transition-group": "^4.2.2",
-    "prettier": "^1.18.2",
-    "react-app-rewire-postcss": "^3.0.2",
-    "react-app-rewired": "^2.1.3",
-    "redux-devtools-extension": "^2.13.8"
+    "redux": "^4.0.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

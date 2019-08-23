@@ -1,18 +1,17 @@
+@import '~antd/dist/antd.css';
+
 .App {
   text-align: center;
   display: flex;
   width: 100%;
   flex-direction: column;
   padding-top: 200px;
-  & button{
-    margin: 5px auto;
-    width: 200px;
-    height: 40px;
-  }
 }
 
-a {
-  text-decoration: none;
+.App button{
+  margin: 5px auto;
+  width: 200px;
+  height: 40px;
 }
 
 .App-logo {
@@ -44,5 +43,3 @@ a {
     transform: rotate(360deg);
   }
 }
-
-
