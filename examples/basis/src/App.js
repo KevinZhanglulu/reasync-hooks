@@ -1,6 +1,6 @@
-import React from "react";
-import "./App.css";
 import("antd/dist/antd.css");
+import "./App.css";
+import React from "react";
 import { applyMiddleware, combineReducers, createStore ,compose} from "redux";
 import {
   asyncReduxMiddlewareCreator,

@@ -1,5 +1,6 @@
-import React from "react";
 import("antd/dist/antd.css");
+import ("./App.css");
+import React from "react";
 import {
   applyMiddleware,
   combineReducers,
