@@ -1,11 +1,10 @@
 import React from "react";
-import "./App.css";
+import("antd/dist/antd.css");
 import {
   applyMiddleware,
   combineReducers,
   createStore,
   compose
-
 } from "redux";
 import {
   asyncErrorReducerCreator,
@@ -19,15 +18,8 @@ import {
 } from "react-redux-async-hooks";
 import { Provider, useDispatch, useStore } from "react-redux";
 import { Button,message } from "antd";
-if (process.env.NODE_ENV === "production") {
-  import("./styles.css");
-} else {
-  // Make sure that the custom stylesheet overrides antd css.
-  import("antd/dist/antd.css").then(() => import("./styles.css"));
-}
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 
 const FULFILLED_ACTION = "FULFILLED_ACTION";
 const REJECTED_ACTION = "REJECTED_ACTION";
