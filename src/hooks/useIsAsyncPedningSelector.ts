@@ -1,15 +1,25 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { PENDING } from "../utils/constant";
 
-export const createPendingSelector = (actionTypes: string[]) => (state: any) =>
-  actionTypes.some(actionTypes => {
-    if (state.asyncState) return state.asyncState[actionTypes] === PENDING;
-    return false;
-  });
+// Return false only when all async action states are in rejected or fulfilled
+export const useIsAsyncPendingSelector = (
+  actionTypes: string[],
+  asyncStateReducerKey = "asyncState"
+) => {
+  const actionTypesMemo = useMemo(() => actionTypes, [...actionTypes]);
+  const asyncStateReducerKeyMemo = useMemo(() => asyncStateReducerKey, [
+    asyncStateReducerKey
+  ]);
+  const pendingSelector = useCallback(
+    (state: any) =>
+      actionTypesMemo.some(actionType => {
+        if (state[asyncStateReducerKeyMemo])
+          return state.asyncState[actionType] === PENDING;
+        return false;
+      }),
+    [actionTypesMemo, asyncStateReducerKeyMemo]
+  );
 
-// Return false only when all async action states are in pending or fulfilled
-export const useIsAsyncPendingSelector = (actionTypes: string[]) => {
-  const pendingSelector = useCallback(createPendingSelector(actionTypes), []);
-  return useSelector<any, boolean>(state => pendingSelector(state));
+  return useSelector<any, boolean>(pendingSelector);
 };
