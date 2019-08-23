@@ -1,61 +1,89 @@
-import React, { useEffect, useState } from "react";
-import { notifier } from "./conponent/Notification";
+import React from "react";
+import "./App.css";
+import { applyMiddleware, combineReducers, createStore } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import {
+    asyncReduxMiddlewareCreator,
+    asyncStateReducer,
+    useIsAsyncPendingSelector,
+    useOnAsyncFulfilled,
+    useOnAsyncRejected
+} from "react-redux-async-hooks";
+import { Provider, useDispatch } from "react-redux";
+import { asyncActionCreator } from "react-redux-async-hooks";
 import { Button } from "./conponent/Button/Button";
+import { notifier } from "./conponent/Notification";
+const composeEnhancers = composeWithDevTools({
+    serialize: true
+});
 
-const BasisExample = () => {
-    //Mock that fetch data successfully
-    const fetchDataSuccess = () =>
+//Create default asyncReduxMiddleware
+const asyncReduxMiddleWare = asyncReduxMiddlewareCreator();
+
+//Add asyncStateReducer to rootReducer
+const rootReducer = combineReducers({
+    asyncState: asyncStateReducer
+});
+
+export const store = createStore(
+    rootReducer,
+    composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+);
+
+const FULFILLED_ACTION = "FULFILLED_ACTION";
+const REJECTED_ACTION = "REJECTED_ACTION";
+
+const asyncFulfilledAction = asyncActionCreator(
+    FULFILLED_ACTION,
+    //Return a fulfilled Promise
+    () =>
         new Promise(function(resolve) {
             setTimeout(function() {
-                //Receive data
-                resolve({ profile: { email: "someone@email.com" } });
+                resolve("");
             }, 1000);
-        });
-
-    //Mock that an error occurs when fetch data
-    const fetchDataError = () =>
+        })
+);
+const asyncRejectedAction = asyncActionCreator(
+    REJECTED_ACTION,
+    //Return a rejected Promise
+    () =>
         new Promise(function(resolve, reject) {
             setTimeout(function() {
-                //An error occurs
-                reject({ msg: "something wrong" });
+                reject("");
             }, 1000);
-        });
+        })
+);
 
-    const [isFulfilledAsyncPending, setIsFulfilledAsyncPending] = useState(false);
-    const [data, setSetData] = useState();
+const BasisExample = () => {
+    const dispatch = useDispatch();
 
-    const [isRejectedAsyncPending, setIsRejectedAsyncPending] = useState(false);
-    const [error, setError] = useState();
+    const isFulfilledActionPending = useIsAsyncPendingSelector([
+        FULFILLED_ACTION
+    ]);
+    const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
 
-    useEffect(() => {
-        if (data) notifier.success(data.profile.email);
-        if (error) notifier.error(error.msg);
-    }, [data, error]);
+    //Notify something when async action is from pending to fulfilled
+    useOnAsyncFulfilled([FULFILLED_ACTION], asyncType => {
+        notifier.success(asyncType);
+    });
+
+    //Notify something when async action is from pending to rejected
+    useOnAsyncRejected([REJECTED_ACTION], asyncType => {
+        notifier.error(asyncType);
+    });
 
     return (
         <div className="App">
             <Button
-                onClick={() => {
-                    setIsFulfilledAsyncPending(true);
-                    fetchDataSuccess().then(data => {
-                        setIsFulfilledAsyncPending(false);
-                        setSetData(data);
-                    });
-                }}
-                isLoading={isFulfilledAsyncPending}
+                onClick={() => dispatch(asyncFulfilledAction)}
+                isLoading={isFulfilledActionPending}
                 isPrimary={true}
             >
                 asyncFulfilledAction
             </Button>
             <Button
-                onClick={() => {
-                    setIsRejectedAsyncPending(true);
-                    fetchDataError().catch(error => {
-                        setIsRejectedAsyncPending(false);
-                        setError(error);
-                    });
-                }}
-                isLoading={isRejectedAsyncPending}
+                onClick={() => dispatch(asyncRejectedAction)}
+                isLoading={isRejectedActionPending}
                 isPrimary={true}
             >
                 asyncRejectedAction
@@ -64,6 +92,10 @@ const BasisExample = () => {
     );
 };
 
-const App = () => (<BasisExample />);
+const App = () => (
+    <Provider store={store}>
+        <BasisExample />
+    </Provider>
+);
 
 export default App;
