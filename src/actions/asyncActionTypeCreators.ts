@@ -1,10 +1,10 @@
 import { FULFILLED, REJECTED, PENDING } from "../utils/constant";
 
-export const asyncFulfilledActionTypeCreator = (type: string): string =>
+export const fulfilledTypeCreator = (type: string): string =>
   `${type}_${FULFILLED}`;
 
-export const asyncRejectedActionTypeCreator = (type: string): string =>
+export const rejectedTypeCreator = (type: string): string =>
   `${type}_${REJECTED}`;
 
-export const asyncPendingActionTypeCreator = (type: string): string =>
+export const pendingTypeCreator = (type: string): string =>
   `${type}_${PENDING}`;

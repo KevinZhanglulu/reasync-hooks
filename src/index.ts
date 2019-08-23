@@ -1,4 +1,4 @@
-import { asyncFulfilledActionTypeCreator } from "./actions/asyncActionTypeCreators";
+import { fulfilledTypeCreator } from "./actions/asyncActionTypeCreators";
 import { useIsAsyncPendingSelector } from "./hooks/useIsAsyncPedningSelector";
 import { asyncStateReducer } from "./reducers/asyncStateReducer";
 import { asyncErrorReducerCreator } from "./reducers/asyncErrorReducerCreator";
@@ -10,7 +10,7 @@ import { useOnAsyncRejected } from "./hooks/useOnAsyncRejected";
 export {
   asyncErrorReducerCreator,
   asyncStateReducer,
-  asyncFulfilledActionTypeCreator,
+  fulfilledTypeCreator,
   useIsAsyncPendingSelector,
   useOnAsyncFulfilled,
   useOnAsyncRejected,

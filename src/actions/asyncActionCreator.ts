@@ -1,13 +1,13 @@
 import {
-  asyncFulfilledActionTypeCreator,
-  asyncPendingActionTypeCreator,
-  asyncRejectedActionTypeCreator
+  fulfilledTypeCreator,
+  rejectedTypeCreator,
+  pendingTypeCreator
 } from "./asyncActionTypeCreators";
 
 const asyncActionTypeCreator = (type: string): string[] => [
-  asyncPendingActionTypeCreator(type),
-  asyncFulfilledActionTypeCreator(type),
-  asyncRejectedActionTypeCreator(type)
+  pendingTypeCreator(type),
+  fulfilledTypeCreator(type),
+  rejectedTypeCreator(type)
 ];
 
 export const asyncActionCreator = <T>(
