@@ -8,17 +8,15 @@ export const useIsAsyncPendingSelector = (
   asyncStateReducerKey = "asyncState"
 ) => {
   const actionTypesMemo = useMemo(() => actionTypes, [...actionTypes]);
-  const asyncStateReducerKeyMemo = useMemo(() => asyncStateReducerKey, [
-    asyncStateReducerKey
-  ]);
+
   const pendingSelector = useCallback(
     (state: any) =>
       actionTypesMemo.some(actionType => {
-        if (state[asyncStateReducerKeyMemo])
+        if (state[asyncStateReducerKey])
           return state.asyncState[actionType] === PENDING;
         return false;
       }),
-    [actionTypesMemo, asyncStateReducerKeyMemo]
+    [actionTypesMemo, asyncStateReducerKey]
   );
 
   return useSelector<any, boolean>(pendingSelector);

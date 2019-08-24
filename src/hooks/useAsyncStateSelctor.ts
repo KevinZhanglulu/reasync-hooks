@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 
-type ActionState = undefined | string;
+type ActionState = { [key: string]: string };
 
 export const useAsyncStateSelector = (
   actionTypes: string[],
@@ -13,41 +13,45 @@ export const useAsyncStateSelector = (
   });
 
   const actionTypesMemo = useMemo(() => actionTypes, [...actionTypes]);
-  const asyncStateReducerKeyMemo = useMemo(() => asyncStateReducerKey, [
-    asyncStateReducerKey
-  ]);
 
   const asyncStateSelector = useCallback(
     (state: any) => {
-      return actionTypesMemo.map(actionType => {
-        if (!state[asyncStateReducerKeyMemo])
-          throw new Error(
-            `You may not pass {${asyncStateReducerKeyMemo}:asyncStateReducer} to combineReducers()`
-          );
-        return state[asyncStateReducerKeyMemo][actionType];
+      if (!state[asyncStateReducerKey])
+        throw new Error(
+          `You may not pass {${asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
+        );
+      let asyncState = {};
+      actionTypesMemo.forEach(actionType => {
+        asyncState = {
+          ...asyncState,
+          [actionType]: state[asyncStateReducerKey][actionType]
+        };
       });
+      return asyncState;
     },
-    [actionTypesMemo, asyncStateReducerKeyMemo]
+    [actionTypesMemo, asyncStateReducerKey]
   );
 
-  const equalityFn = (
-    newStates: ActionState[],
-    currentStates: ActionState[]
-  ) => {
-    for (let i = 0; i < currentStates.length; i++) {
-      if (currentStates[i] !== newStates[i]) {
-        currentStates[i] = newStates[i];
-        if (newStates[i] === asyncStateType) {
-          asyncAction.current = { type: actionTypes[i] };
-          //Re-render
-          return false;
+  const equalityFn = useCallback(
+    (newState: ActionState, currentState: ActionState) => {
+      actionTypesMemo.forEach(actionType => {
+        if (currentState[actionType] !== newState[actionType]) {
+          //Avoid bugs when actionTypesMemo is changed
+          const preState = currentState[actionType];
+          currentState[actionType] = newState[actionType];
+          if (preState && newState[actionType] === asyncStateType) {
+            asyncAction.current = { type: actionType };
+            //Re-render
+            return false;
+          }
         }
-      }
-    }
-    return true;
-  };
+      });
+      return true;
+    },
+    [actionTypesMemo, asyncStateType]
+  );
 
-  useSelector<any, ActionState[]>(
+  useSelector<any, ActionState>(
     asyncStateSelector,
     //The useSelector calls equalityFn in the useEffect on the server or useLayoutEffect on the browser.(https://github.com/reduxjs/react-redux/blob/0c5f7646f600e635e1caf62863ad61350011f3e7/src/hooks/useSelector.js#L71)
     equalityFn
