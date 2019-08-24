@@ -203,7 +203,7 @@ export default App;
 
 There are two examples. One uses the react-redux-async-hooks, the other only uses hooks. Both examples implement same goal that fetch data and, if successful, notify the data, otherwise notify the error message.
 
-### 1.Only use hooks
+#### 1.Only use hooks
 
 ```jsx
 import React, { useEffect, useState } from "react";
