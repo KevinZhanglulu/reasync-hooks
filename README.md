@@ -21,6 +21,8 @@ A tool to keep track of redux async action states, based on [react-redux](https:
   - [`asyncErrorReducerCreator`](#asyncErrorReducerCreator)
   - [`fulfilledTypeCreator`](#fulfilledTypeCreator)
 
+- [Todo](#todo)
+
 ## Installation
 
 React Redux Async Hooks requires **React 16.8.3 and React-redux 7.10 or later.**
@@ -501,6 +503,10 @@ changes from **pending** to **rejected**. The `actionType` is passed to `handler
 #### Return
 
 ​	`asyncFulfilledType:string`: An async action type that you can use in your reducers to catch up the async action when it is in **fulfilled**.
+
+### Todo
+
+- [ ] Add test
 
 ## License
 
