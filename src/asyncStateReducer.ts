@@ -1,5 +1,5 @@
-import { FULFILLED, PENDING, REJECTED } from "../utils/constant";
-import { Reducer } from "../utils/reduxTypes";
+import { FULFILLED, PENDING, REJECTED } from "./utils/constant";
+import { Reducer } from "./utils/reduxTypes";
 
 export const asyncStateReducer: Reducer = (state = {}, action) => {
   const { type } = action;
