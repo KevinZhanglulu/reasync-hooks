@@ -1,13 +1,8 @@
 import React from "react";
+import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import {
-  applyMiddleware,
-  combineReducers,
-  createStore,
-  compose
-} from "redux";
-import {
-  asyncErrorReducerCreator,
   fulfilledTypeCreator,
+  rejectedTypeCreator,
   asyncReduxMiddlewareCreator,
   asyncStateReducer,
   useIsAsyncPendingSelector,
@@ -16,9 +11,9 @@ import {
   asyncActionCreator
 } from "react-redux-async-hooks";
 import { Provider, useDispatch, useStore } from "react-redux";
-import { Button,message } from "antd";
+import { Button, message } from "antd";
 import("antd/dist/antd.css");
-import ("./App.css");
+import("./App.css");
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -50,11 +45,7 @@ const asyncFulfilledAction = asyncActionCreator(
 
 const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
 
-const fulfilledHandler = (
-    resolveValue,
-    action,
-    dispatch
-) => {
+const fulfilledHandler = (resolveValue, action, dispatch) => {
   dispatch({ ...action, data: resolveValue });
 };
 
@@ -68,22 +59,31 @@ const fulfilledReducer = (state = {}, action) => {
   return state;
 };
 
-const rejectedHandler = (
-    rejectedReason,
-    action ,
-    dispatch
-) => {
+const rejectedHandler = (rejectedReason, action, dispatch) => {
   dispatch({
     ...action,
     error: rejectedReason
   });
 };
-const errorReducer = asyncErrorReducerCreator((state, action) => {
-  return {
-    ...state,
-    [action.type]: action.error
-  };
-});
+const errorReducer = (state = {}, action) => {
+  if (
+      action.type === rejectedTypeCreator(FULFILLED_ACTION)
+  )
+    return {
+      ...state,
+      [FULFILLED_ACTION]: action.error
+    };
+
+  if (
+      action.type === rejectedTypeCreator(REJECTED_ACTION)
+  )
+    return {
+      ...state,
+      [REJECTED_ACTION]: action.error
+    };
+
+  return state
+};
 
 //Customize an asyncReduxMiddleware
 const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
@@ -125,27 +125,27 @@ const AdvancedExample = () => {
 
   return (
       <div className="App">
-      <Button
-  onClick={() => dispatch(asyncFulfilledAction)}
-  loading={isFulfilledActionPending}
-  type='primary'
-      >
-      asyncFulfilledAction
-      </Button>
-      <Button
-  onClick={() => dispatch(asyncRejectedAction)}
-  loading={isRejectedActionPending}
-  type='danger'
-      >
-      asyncRejectedAction
-      </Button>
+        <Button
+            onClick={() => dispatch(asyncFulfilledAction)}
+            loading={isFulfilledActionPending}
+            type="primary"
+        >
+          asyncFulfilledAction
+        </Button>
+        <Button
+            onClick={() => dispatch(asyncRejectedAction)}
+            loading={isRejectedActionPending}
+            type="danger"
+        >
+          asyncRejectedAction
+        </Button>
       </div>
-);
+  );
 };
 
 const App = () => (
     <Provider store={store}>
-    <AdvancedExample />
+      <AdvancedExample />
     </Provider>
 );
 
