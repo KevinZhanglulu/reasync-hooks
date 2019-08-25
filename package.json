@@ -1,6 +1,6 @@
 {
   "name": "react-redux-async-hooks",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A tool to help user keep track of redux async action states.",
   "homepage": "https://github.com/KevinZhanglulu/react-redux-async-hooks",
   "repository": "github:KevinZhanglulu/react-redux-async-hooks",
@@ -26,7 +26,7 @@
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"",
     "build": "rollup -c",
     "clean": "rimraf lib es dist",
-    "prepare": "npm run clean && npm run build",
+    "prepare": "npm run test && npm run clean && npm run build",
     "lint": "eslint src/**/*.ts",
     "test": "jest --verbose ./test"
   },
@@ -38,6 +38,7 @@
     "@testing-library/jest-dom": "^4.1.0",
     "@testing-library/react": "^9.1.3",
     "@testing-library/react-hooks": "^2.0.1",
+    "@types/jest": "^24.0.18",
     "@types/react": "^16.9.2",
     "@types/react-redux": "^7.1.2",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
@@ -58,8 +59,5 @@
     "rollup-plugin-typescript2": "^0.22.1",
     "ts-jest": "^24.0.2",
     "typescript": "^3.5.3"
-  },
-  "dependencies": {
-    "@types/jest": "^24.0.18"
   }
 }
