@@ -34,18 +34,17 @@ export const useAsyncStateSelector = (
 
   const equalityFn = useCallback(
     (newState: ActionState, currentState: ActionState) => {
-      actionTypesMemo.forEach(actionType => {
-        if (currentState[actionType] !== newState[actionType]) {
+      for (let i = 0; i < actionTypesMemo.length; i++)
+        if (currentState[actionTypesMemo[i]] !== newState[actionTypesMemo[i]]) {
           //Avoid bugs when actionTypesMemo is changed
-          const preState = currentState[actionType];
-          currentState[actionType] = newState[actionType];
-          if (preState && newState[actionType] === asyncStateType) {
-            asyncAction.current = { type: actionType };
+          const preState = currentState[actionTypesMemo[i]];
+          currentState[actionTypesMemo[i]] = newState[actionTypesMemo[i]];
+          if (preState && newState[actionTypesMemo[i]] === asyncStateType) {
+            asyncAction.current = { type: actionTypesMemo[i] };
             //Re-render
             return false;
           }
         }
-      });
       return true;
     },
     [actionTypesMemo, asyncStateType]
