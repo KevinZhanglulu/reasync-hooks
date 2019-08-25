@@ -1,6 +1,6 @@
 import { AnyAction, Dispatch, Middleware } from "./utils/reduxTypes";
 
-type AsyncHandler = (
+export type AsyncHandler = (
   valueOrReason: any, //resolved value or rejected reason
   action: AnyAction,
   dispatch: Dispatch,
