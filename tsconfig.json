@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
+    "target": "es5",
     "strict": true,
-    "removeComments": true
+    "removeComments": true,
+    "jsx": "react"
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

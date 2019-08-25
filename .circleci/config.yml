@@ -26,3 +26,6 @@ jobs:
 
       #run build!
       - run: yarn build
+
+      # run test!
+      - run: yarn test
