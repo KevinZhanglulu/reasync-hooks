@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import {
   asyncReduxMiddlewareCreator,
@@ -11,6 +10,8 @@ import {
 } from "react-redux-async-hooks";
 import { Provider, useDispatch } from "react-redux";
 import { Button, message } from "antd";
+import("antd/dist/antd.css");
+import ("./App.css");
 
 /*
 Step 1: create store

@@ -63,7 +63,7 @@ const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
 Step 3: create reducers
  */
 const fulfilledReducer = (state = {}, action) => {
-  if (action.type === fulfilledTypeCreator(FULFILLED_ACTION)) {
+  if (action.type === fulfilledTypeCreator(REJECTED_ACTION)) {
     return {
       ...state,
       ...action.data
@@ -72,20 +72,12 @@ const fulfilledReducer = (state = {}, action) => {
   return state;
 };
 const errorReducer = (state = {}, action) => {
-  switch (action.type) {
-    case rejectedTypeCreator(FULFILLED_ACTION):
-      return {
-        ...state,
-        [FULFILLED_ACTION]: action.error
-      };
-    case rejectedTypeCreator(REJECTED_ACTION):
-      return {
-        ...state,
-        [FULFILLED_ACTION]: action.error
-      };
-    default:
-      return state;
-  }
+  if (action.type === rejectedTypeCreator(REJECTED_ACTION))
+    return {
+      ...state,
+      [REJECTED_ACTION]: action.error
+    };
+  return state;
 };
 
 /*
