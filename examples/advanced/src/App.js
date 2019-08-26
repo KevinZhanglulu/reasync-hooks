@@ -1,3 +1,5 @@
+import "antd/dist/antd.css";
+import "./App.css";
 import React from "react";
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import {
@@ -12,8 +14,6 @@ import {
 } from "react-redux-async-hooks";
 import { Provider, useDispatch, useStore } from "react-redux";
 import { Button, message } from "antd";
-import("antd/dist/antd.css");
-import("./App.css");
 
 /*
 Step 1: customize the redux  middleware
@@ -28,8 +28,8 @@ const rejectedHandler = (rejectedReason, action, dispatch) => {
   });
 };
 const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
-    fulfilledHandler,
-    rejectedHandler
+  fulfilledHandler,
+  rejectedHandler
 );
 
 /*
@@ -39,23 +39,23 @@ const FULFILLED_ACTION = "FULFILLED_ACTION";
 const REJECTED_ACTION = "REJECTED_ACTION";
 //Mock that fetch data successfully
 const fetchDataSuccess = () =>
-    new Promise(function(resolve) {
-      setTimeout(function() {
-        //Receive data
-        resolve({ profile: { email: "someone@email.com" } });
-      }, 1000);
-    });
+  new Promise(function(resolve) {
+    setTimeout(function() {
+      //Receive data
+      resolve({ profile: { email: "someone@email.com" } });
+    }, 1000);
+  });
 //Mock that an error occurs when fetch data
 const fetchDataError = () =>
-    new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        //An error occurs
-        reject({ msg: "something wrong" });
-      }, 1000);
-    });
+  new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      //An error occurs
+      reject({ msg: "something wrong" });
+    }, 1000);
+  });
 const asyncFulfilledAction = asyncActionCreator(
-    FULFILLED_ACTION,
-    fetchDataSuccess
+  FULFILLED_ACTION,
+  fetchDataSuccess
 );
 const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
 
@@ -90,8 +90,8 @@ const rootReducer = combineReducers({
   asyncState: asyncStateReducer
 });
 export const store = createStore(
-    rootReducer,
-    composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+  rootReducer,
+  composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
 );
 
 /*
@@ -113,22 +113,22 @@ const AdvancedExample = () => {
     message.error(store.getState().error[asyncType].msg);
   });
   return (
-      <div className="App">
-        <Button
-            onClick={() => dispatch(asyncFulfilledAction)}
-            loading={isFulfilledActionPending}
-            type="primary"
-        >
-          asyncFulfilledAction
-        </Button>
-        <Button
-            onClick={() => dispatch(asyncRejectedAction)}
-            loading={isRejectedActionPending}
-            type="danger"
-        >
-          asyncRejectedAction
-        </Button>
-      </div>
+    <div className="App">
+      <Button
+        onClick={() => dispatch(asyncFulfilledAction)}
+        loading={isFulfilledActionPending}
+        type="primary"
+      >
+        asyncFulfilledAction
+      </Button>
+      <Button
+        onClick={() => dispatch(asyncRejectedAction)}
+        loading={isRejectedActionPending}
+        type="danger"
+      >
+        asyncRejectedAction
+      </Button>
+    </div>
   );
 };
 
@@ -136,8 +136,8 @@ const AdvancedExample = () => {
 Step 6: nest the component inside of a `<Provider>
  */
 const App = () => (
-    <Provider store={store}>
-      <AdvancedExample />
-    </Provider>
+  <Provider store={store}>
+    <AdvancedExample />
+  </Provider>
 );
 export default App;
