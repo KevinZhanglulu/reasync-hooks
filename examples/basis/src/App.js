@@ -1,5 +1,6 @@
 import React from "react";
-import { applyMiddleware, combineReducers, createStore ,compose} from "redux";
+import "./App.css";
+import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import {
   asyncReduxMiddlewareCreator,
   asyncStateReducer,
@@ -9,28 +10,26 @@ import {
   asyncActionCreator
 } from "react-redux-async-hooks";
 import { Provider, useDispatch } from "react-redux";
-import { Button,message } from "antd";
-import("antd/dist/antd.css");
-import ("./App.css");
+import { Button, message } from "antd";
 
+/*
+Step 1: create store
+ */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-//Create default asyncReduxMiddleware
 const asyncReduxMiddleWare = asyncReduxMiddlewareCreator();
-
-//Add asyncStateReducer to rootReducer
 const rootReducer = combineReducers({
   asyncState: asyncStateReducer
 });
-
-export const store = createStore(
+const store = createStore(
     rootReducer,
     composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
 );
 
+/*
+Step 2: create async actions
+ */
 const FULFILLED_ACTION = "FULFILLED_ACTION";
 const REJECTED_ACTION = "REJECTED_ACTION";
-
 const asyncFulfilledAction = asyncActionCreator(
     FULFILLED_ACTION,
     //Return a fulfilled Promise
@@ -52,37 +51,36 @@ const asyncRejectedAction = asyncActionCreator(
         })
 );
 
-const AsyncExample = () => {
+/*
+Step 3: use hooks in your component
+ */
+const BasisExample = () => {
   const dispatch = useDispatch();
-
   const isFulfilledActionPending = useIsAsyncPendingSelector([
     FULFILLED_ACTION
   ]);
   const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
-
   //Notify something when async action is from pending to fulfilled
   useOnAsyncFulfilled([FULFILLED_ACTION], asyncType => {
     message.success(asyncType);
   });
-
   //Notify something when async action is from pending to rejected
   useOnAsyncRejected([REJECTED_ACTION], asyncType => {
     message.error(asyncType);
   });
-
   return (
       <div className="App">
         <Button
             onClick={() => dispatch(asyncFulfilledAction)}
             loading={isFulfilledActionPending}
-            type='primary'
+            type="primary"
         >
           asyncFulfilledAction
         </Button>
         <Button
             onClick={() => dispatch(asyncRejectedAction)}
             loading={isRejectedActionPending}
-            type='danger'
+            type="danger"
         >
           asyncRejectedAction
         </Button>
@@ -90,10 +88,12 @@ const AsyncExample = () => {
   );
 };
 
+/*
+Step4: nest the component inside of a `<Provider>`
+ */
 const App = () => (
     <Provider store={store}>
-      <AsyncExample />
+      <BasisExample />
     </Provider>
 );
-
 export default App;
