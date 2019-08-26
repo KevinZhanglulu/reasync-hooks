@@ -1,6 +1,7 @@
 # React Redux Async Hooks
 
-[![CircleCI](https://circleci.com/gh/KevinZhanglulu/react-redux-async-hooks.svg?style=svg)](https://circleci.com/gh/KevinZhanglulu/react-redux-async-hooks)
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg) [![npm version](https://img.shields.io/npm/v/react-redux-async-hooks.svg?style=flat)](https://www.npmjs.com/package/react-redux-async-hooks)[![CircleCI](https://circleci.com/gh/KevinZhanglulu/react-redux-async-hooks.svg?style=svg)](https://circleci.com/gh/KevinZhanglulu/react-redux-async-hooks) 
+
 
 A tool to keep track of redux async action states, based on [react-redux](https://react-redux.js.org/) and [react hooks](https://reactjs.org/docs/hooks-intro.html).
 
@@ -9,7 +10,7 @@ A tool to keep track of redux async action states, based on [react-redux](https:
 - [Installation](#installation)
 - [Example](#example)
   - [Basis example](#basis-example)
-  - [Advanced example: fetch data](#advanced-example-fetch-data)
+  - [Advanced example: fetch data and handler error](#advanced-example-fetch-data-and-handler-error)
   
 - [API](#api)
   - [`asyncActionCreator`](#asyncActionCreator)
@@ -18,8 +19,8 @@ A tool to keep track of redux async action states, based on [react-redux](https:
   - [`useIsAsyncPendingSelector`](#useIsAsyncPendingSelector)
   - [`useOnAsyncFulfilled`](#useOnAsyncFulfilled)
   - [`useOnAsyncRejected`](#useOnAsyncRejected)
-  - [`asyncErrorReducerCreator`](#asyncErrorReducerCreator)
   - [`fulfilledTypeCreator`](#fulfilledTypeCreator)
+  - [`rejectedTypeCreator`](#rejectedTypeCreator)
 
 - [Todo](#todo)
 
@@ -42,176 +43,134 @@ modules](https://webpack.js.org/api/module-methods/#commonjs).
 
 You can play around with the following **example** in [this codesandbox](https://codesandbox.io/s/github/KevinZhanglulu/react-redux-async-hooks/tree/master/examples/basis):
 
-```jsx
-import React from "react";
-import {
-  applyMiddleware,
-  combineReducers,
-  createStore,
-  compose
-} from "redux";
-import {
-  asyncErrorReducerCreator,
-  fulfilledTypeCreator,
-  asyncReduxMiddlewareCreator,
-  asyncStateReducer,
-  useIsAsyncPendingSelector,
-  useOnAsyncFulfilled,
-  useOnAsyncRejected,
-  asyncActionCreator
-} from "react-redux-async-hooks";
-import { Provider, useDispatch, useStore } from "react-redux";
-import { Button,message } from "antd";
-import("antd/dist/antd.css");
-import ("./App.css");
+#### **Step 1**
+
+##### Create store
+
+```js
+import { applyMiddleware, combineReducers, createStore, compose } from "redux";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "react-redux-async-hooks";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const asyncReduxMiddleWare = asyncReduxMiddlewareCreator();
+const rootReducer = combineReducers({
+  asyncState: asyncStateReducer
+});
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+);
+```
+
+#### Step 2
+
+##### Create async actions
+
+```js
+import { asyncActionCreator } from "react-redux-async-hooks";
 
 const FULFILLED_ACTION = "FULFILLED_ACTION";
 const REJECTED_ACTION = "REJECTED_ACTION";
-
-//Mock that fetch data successfully
-const fetchDataSuccess = () =>
+const asyncFulfilledAction = asyncActionCreator(
+  FULFILLED_ACTION,
+  //Return a fulfilled Promise
+  () =>
     new Promise(function(resolve) {
       setTimeout(function() {
-        //Receive data
-        resolve({ profile: { email: "someone@email.com" } });
+        resolve("");
       }, 1000);
-    });
-
-//Mock that an error occurs when fetch data
-const fetchDataError = () =>
+    })
+);
+const asyncRejectedAction = asyncActionCreator(
+  REJECTED_ACTION,
+  //Return a rejected Promise
+  () =>
     new Promise(function(resolve, reject) {
       setTimeout(function() {
-        //An error occurs
-        reject({ msg: "something wrong" });
+        reject("");
       }, 1000);
-    });
-
-const asyncFulfilledAction = asyncActionCreator(
-    FULFILLED_ACTION,
-    fetchDataSuccess
+    })
 );
+```
 
-const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
+#### Step 3
 
-const fulfilledHandler = (
-    resolveValue,
-    action,
-    dispatch
-) => {
-  dispatch({ ...action, data: resolveValue });
-};
+##### Use hooks in your component
 
-const fulfilledReducer = (state = {}, action) => {
-  if (action.type === fulfilledTypeCreator(FULFILLED_ACTION)) {
-    return {
-      ...state,
-      ...action.data
-    };
-  }
-  return state;
-};
+```jsx
+import {
+  useIsAsyncPendingSelector,
+  useOnAsyncFulfilled,
+  useOnAsyncRejected
+} from "react-redux-async-hooks";
+import { useDispatch } from "react-redux";
+import { Button, message } from "antd";
 
-const rejectedHandler = (
-    rejectedReason,
-    action ,
-    dispatch
-) => {
-  dispatch({
-    ...action,
-    error: rejectedReason
-  });
-};
-const errorReducer = asyncErrorReducerCreator((state, action) => {
-  return {
-    ...state,
-    [action.type]: action.error
-  };
-});
-
-//Customize an asyncReduxMiddleware
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
-    fulfilledHandler,
-    rejectedHandler
-);
-
-//Combine fulfilledReducer,errorReducer,asyncStateReducer
-const rootReducer = combineReducers({
-  user: fulfilledReducer,
-  error: errorReducer,
-  asyncState: asyncStateReducer
-});
-
-export const store = createStore(
-    rootReducer,
-    composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
-);
-
-const AdvancedExample = () => {
+const BasisExample = () => {
   const dispatch = useDispatch();
-
-  const store = useStore();
-
   const isFulfilledActionPending = useIsAsyncPendingSelector([
     FULFILLED_ACTION
   ]);
   const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
-
-  //Notify data when async action changes from pending to fulfilled
-  useOnAsyncFulfilled([FULFILLED_ACTION], () => {
-    message.success(store.getState().user.profile.email);
+  //Notify something when async action is from pending to fulfilled
+  useOnAsyncFulfilled([FULFILLED_ACTION], asyncType => {
+    message.success(asyncType);
   });
-
-  //Notify error message when async action is from pending to rejected
+  //Notify something when async action is from pending to rejected
   useOnAsyncRejected([REJECTED_ACTION], asyncType => {
-    message.error(store.getState().error[asyncType].msg);
+    message.error(asyncType);
   });
-
   return (
-      <div className="App">
+    <div className="App">
       <Button
-  onClick={() => dispatch(asyncFulfilledAction)}
-  loading={isFulfilledActionPending}
-  type='primary'
+        onClick={() => dispatch(asyncFulfilledAction)}
+        loading={isFulfilledActionPending}
+        type="primary"
       >
-      asyncFulfilledAction
+        asyncFulfilledAction
       </Button>
       <Button
-  onClick={() => dispatch(asyncRejectedAction)}
-  loading={isRejectedActionPending}
-  type='danger'
+        onClick={() => dispatch(asyncRejectedAction)}
+        loading={isRejectedActionPending}
+        type="danger"
       >
-      asyncRejectedAction
+        asyncRejectedAction
       </Button>
-      </div>
-);
+    </div>
+  );
 };
+```
+
+#### Step 4
+
+##### Nest the component inside of a `<Provider>`
+
+```jsx
+import { Provider } from "react-redux";
 
 const App = () => (
-    <Provider store={store}>
-    <AdvancedExample />
-    </Provider>
+  <Provider store={store}>
+    <BasisExample />
+  </Provider>
 );
-
 export default App;
 ```
 
+#### Complete example:
 
+### Advanced example: fetch data and handler error
 
-### Advanced example: fetch data
+There are two examples. One uses the react-redux-async-hooks, the other only uses hooks. Both examples implement the same goal that fetch data and, if successful, notify the data, otherwise notify the error message.
 
-There are two examples. One uses the react-redux-async-hooks, the other only uses hooks. Both examples implement same goal that fetch data and, if successful, notify the data, otherwise notify the error message.
+#### 1.Only use react hooks
 
-#### 1.Only use hooks
+**Note**: This example is only used to help users understand the usage of react-redux-async-hooks and is not recommended.
 
 ```jsx
 import React, { useEffect, useState } from "react";
-import { Provider } from "react-redux";
-import { store } from "./App";
 import {Button,message} from 'antd'
 
-const BasisExample = () => {
+const ExampleOnlyUseHooks = () => {
   //Mock that fetch data successfully
   const fetchDataSuccess = () =>
       new Promise(function(resolve) {
@@ -275,24 +234,197 @@ const BasisExample = () => {
       </div>
   );
 };
-
-const App = () => (
-    <Provider store={store}>
-      <BasisExample />
-    </Provider>
-);
-
-export default App;
 ```
 
 #### 2.Use react-redux-async-hooks
 
 You can play around with the following **example** in [this codesandbox](https://codesandbox.io/s/github/KevinZhanglulu/react-redux-async-hooks/tree/master/examples/advanced):
 
+#### Step 1
+
+##### Customize the redux  middleware
+
+```jsx
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "react-redux-async-hooks";
+
+const fulfilledHandler = (resolveValue, action, dispatch) => {
+  dispatch({ ...action, data: resolveValue });
+};
+const rejectedHandler = (rejectedReason, action, dispatch) => {
+  dispatch({
+    ...action,
+    error: rejectedReason
+  });
+};
+const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
+  fulfilledHandler,
+  rejectedHandler
+);
+```
+
+#### Step 2
+
+##### Create async actions
+
+```js
+import { asyncStateReducer, asyncActionCreator } from "react-redux-async-hooks";
+
+const FULFILLED_ACTION = "FULFILLED_ACTION";
+const REJECTED_ACTION = "REJECTED_ACTION";
+//Mock that fetch data successfully
+const fetchDataSuccess = () =>
+  new Promise(function(resolve) {
+    setTimeout(function() {
+      //Receive data
+      resolve({ profile: { email: "someone@email.com" } });
+    }, 1000);
+  });
+//Mock that an error occurs when fetch data
+const fetchDataError = () =>
+  new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      //An error occurs
+      reject({ msg: "something wrong" });
+    }, 1000);
+  });
+const asyncFulfilledAction = asyncActionCreator(
+  FULFILLED_ACTION,
+  fetchDataSuccess
+);
+const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
+```
+
+
+
+#### Step 3
+
+##### Create reducers
+
+```js
+import {
+  fulfilledTypeCreator,
+  rejectedTypeCreator
+} from "react-redux-async-hooks";
+
+const fulfilledReducer = (state = {}, action) => {
+  if (action.type === fulfilledTypeCreator(FULFILLED_ACTION)) {
+    return {
+      ...state,
+      ...action.data
+    };
+  }
+  return state;
+};
+const errorReducer = (state = {}, action) => {
+  switch (action.type) {
+    case rejectedTypeCreator(FULFILLED_ACTION):
+      return {
+        ...state,
+        [FULFILLED_ACTION]: action.error
+      };
+    case rejectedTypeCreator(REJECTED_ACTION):
+      return {
+        ...state,
+        [FULFILLED_ACTION]: action.error
+      };
+    default:
+      return state;
+  }
+};
+```
+
+#### Step 4
+
+##### Create store
+
+```js
+import { applyMiddleware, combineReducers, createStore, compose } from "redux";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "react-redux-async-hooks";
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const rootReducer = combineReducers({
+  user: fulfilledReducer,
+  error: errorReducer,
+  asyncState: asyncStateReducer
+});
+export const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+);
+```
+
+#### Step 5
+
+##### Use hooks in your component
+
+```jsx
+import {
+  useIsAsyncPendingSelector,
+  useOnAsyncFulfilled,
+  useOnAsyncRejected
+} from "react-redux-async-hooks";
+import { useDispatch, useStore } from "react-redux";
+import { Button, message } from "antd";
+
+const AdvancedExample = () => {
+  const dispatch = useDispatch();
+  const store = useStore();
+  const isFulfilledActionPending = useIsAsyncPendingSelector([
+    FULFILLED_ACTION
+  ]);
+  const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
+  //Notify data when async action changes from pending to fulfilled
+  useOnAsyncFulfilled([FULFILLED_ACTION], () => {
+    message.success(store.getState().user.profile.email);
+  });
+  //Notify error message when async action is from pending to rejected
+  useOnAsyncRejected([REJECTED_ACTION], asyncType => {
+    message.error(store.getState().error[asyncType].msg);
+  });
+  return (
+    <div className="App">
+      <Button
+        onClick={() => dispatch(asyncFulfilledAction)}
+        loading={isFulfilledActionPending}
+        type="primary"
+      >
+        asyncFulfilledAction
+      </Button>
+      <Button
+        onClick={() => dispatch(asyncRejectedAction)}
+        loading={isRejectedActionPending}
+        type="danger"
+      >
+        asyncRejectedAction
+      </Button>
+    </div>
+  );
+};
+```
+
+#### Step 6
+
+##### Nest the component inside of a `<Provider>`
+
+```jsx
+import { Provider } from "react-redux";
+
+const App = () => (
+  <Provider store={store}>
+    <AdvancedExample />
+  </Provider>
+);
+export default App;
+```
+
+#### complete example:
+
 ```jsx
 import React from "react";
-import { applyMiddleware, combineReducers, createStore ,compose} from "redux";
+import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import {
+  fulfilledTypeCreator,
+  rejectedTypeCreator,
   asyncReduxMiddlewareCreator,
   asyncStateReducer,
   useIsAsyncPendingSelector,
@@ -300,18 +432,91 @@ import {
   useOnAsyncRejected,
   asyncActionCreator
 } from "react-redux-async-hooks";
-import { Provider, useDispatch } from "react-redux";
-import { Button,message } from "antd";
+import { Provider, useDispatch, useStore } from "react-redux";
+import { Button, message } from "antd";
 import("antd/dist/antd.css");
-import ("./App.css");
+import("./App.css");
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-//Create default asyncReduxMiddleware
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator();
+const FULFILLED_ACTION = "FULFILLED_ACTION";
+const REJECTED_ACTION = "REJECTED_ACTION";
 
-//Add asyncStateReducer to rootReducer
+//Mock that fetch data successfully
+const fetchDataSuccess = () =>
+    new Promise(function(resolve) {
+      setTimeout(function() {
+        //Receive data
+        resolve({ profile: { email: "someone@email.com" } });
+      }, 1000);
+    });
+
+//Mock that an error occurs when fetch data
+const fetchDataError = () =>
+    new Promise(function(resolve, reject) {
+      setTimeout(function() {
+        //An error occurs
+        reject({ msg: "something wrong" });
+      }, 1000);
+    });
+
+const asyncFulfilledAction = asyncActionCreator(
+    FULFILLED_ACTION,
+    fetchDataSuccess
+);
+
+const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
+
+const fulfilledHandler = (resolveValue, action, dispatch) => {
+  dispatch({ ...action, data: resolveValue });
+};
+
+const fulfilledReducer = (state = {}, action) => {
+  if (action.type === fulfilledTypeCreator(FULFILLED_ACTION)) {
+    return {
+      ...state,
+      ...action.data
+    };
+  }
+  return state;
+};
+
+const rejectedHandler = (rejectedReason, action, dispatch) => {
+  dispatch({
+    ...action,
+    error: rejectedReason
+  });
+};
+const errorReducer = (state = {}, action) => {
+  if (
+      action.type === rejectedTypeCreator(FULFILLED_ACTION)
+  )
+    return {
+      ...state,
+      [FULFILLED_ACTION]: action.error
+    };
+
+  if (
+      action.type === rejectedTypeCreator(REJECTED_ACTION)
+  )
+    return {
+      ...state,
+      [REJECTED_ACTION]: action.error
+    };
+
+  return state
+};
+
+//Customize an asyncReduxMiddleware
+const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
+    fulfilledHandler,
+    rejectedHandler
+);
+
+//Combine fulfilledReducer,errorReducer,asyncStateReducer
 const rootReducer = combineReducers({
+  user: fulfilledReducer,
+  error: errorReducer,
   asyncState: asyncStateReducer
 });
 
@@ -320,46 +525,24 @@ export const store = createStore(
     composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
 );
 
-const FULFILLED_ACTION = "FULFILLED_ACTION";
-const REJECTED_ACTION = "REJECTED_ACTION";
-
-const asyncFulfilledAction = asyncActionCreator(
-    FULFILLED_ACTION,
-    //Return a fulfilled Promise
-    () =>
-        new Promise(function(resolve) {
-          setTimeout(function() {
-            resolve("");
-          }, 1000);
-        })
-);
-const asyncRejectedAction = asyncActionCreator(
-    REJECTED_ACTION,
-    //Return a rejected Promise
-    () =>
-        new Promise(function(resolve, reject) {
-          setTimeout(function() {
-            reject("");
-          }, 1000);
-        })
-);
-
-const AsyncExample = () => {
+const AdvancedExample = () => {
   const dispatch = useDispatch();
+
+  const store = useStore();
 
   const isFulfilledActionPending = useIsAsyncPendingSelector([
     FULFILLED_ACTION
   ]);
   const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
 
-  //Notify something when async action is from pending to fulfilled
-  useOnAsyncFulfilled([FULFILLED_ACTION], asyncType => {
-    message.success(asyncType);
+  //Notify data when async action changes from pending to fulfilled
+  useOnAsyncFulfilled([FULFILLED_ACTION], () => {
+    message.success(store.getState().user.profile.email);
   });
 
-  //Notify something when async action is from pending to rejected
+  //Notify error message when async action is from pending to rejected
   useOnAsyncRejected([REJECTED_ACTION], asyncType => {
-    message.error(asyncType);
+    message.error(store.getState().error[asyncType].msg);
   });
 
   return (
@@ -367,14 +550,14 @@ const AsyncExample = () => {
         <Button
             onClick={() => dispatch(asyncFulfilledAction)}
             loading={isFulfilledActionPending}
-            type='primary'
+            type="primary"
         >
           asyncFulfilledAction
         </Button>
         <Button
             onClick={() => dispatch(asyncRejectedAction)}
             loading={isRejectedActionPending}
-            type='danger'
+            type="danger"
         >
           asyncRejectedAction
         </Button>
@@ -384,7 +567,7 @@ const AsyncExample = () => {
 
 const App = () => (
     <Provider store={store}>
-      <AsyncExample />
+      <AdvancedExample />
     </Provider>
 );
 
@@ -484,16 +667,6 @@ changes from **pending** to **rejected**. The `actionType` is passed to `handler
 
 ​	`void`
 
-### asyncErrorReducerCreator
-
-#### Parameters
-
-​	`originReducer:(state,action)=>state`: A [reducer](https://redux.js.org/basics/reducers).
-
-#### Return
-
-​	`errorReducer:(state,action)=>state`: A wrapped `reducer` is almost a [reducer](https://redux.js.org/basics/reducers), except that it returns `originRducer(state,action)` when the `type` property in  `action` is `rejectedType`, or it returns the state that is passed.
-
 ### fulfilledTypeCreator
 
 #### Parameters
@@ -504,9 +677,19 @@ changes from **pending** to **rejected**. The `actionType` is passed to `handler
 
 ​	`asyncFulfilledType:string`: An async action type that you can use in your reducers to catch up the async action when it is in **fulfilled**.
 
+### rejectedTypeCreator
+
+#### Parameters
+
+​	`actionType:string`: An action type that represents an async action.
+
+#### Return
+
+​	`asyncFulfilledType:string`: An async action type that you can use in your reducers to catch up the async action when it is in **rejected**.
+
 ### Todo
 
-- [ ] Add test
+- [x] Add test
 
 ## License
 

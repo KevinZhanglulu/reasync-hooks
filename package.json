@@ -1,6 +1,6 @@
 {
   "name": "react-redux-async-hooks",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A tool to help user keep track of redux async action states.",
   "homepage": "https://github.com/KevinZhanglulu/react-redux-async-hooks",
   "repository": "github:KevinZhanglulu/react-redux-async-hooks",
