@@ -27,6 +27,11 @@ export const asyncReduxMiddlewareCreator = (
     if (typeof rejectedHandler !== "function") {
       throw new Error("Expected the rejectedHandler to be a function.");
     }
+    if (typeof asyncFunction !== "function") {
+      throw new Error(
+        "Expected the asyncFunction to be a function that returns a Promise."
+      );
+    }
     return asyncFunction(getState)
       .then((resolvedValue: any) =>
         fulfilledHandler(
