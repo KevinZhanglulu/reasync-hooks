@@ -668,6 +668,10 @@ export default App;
 
 ### asyncActionCreator
 
+```js
+const asyncAction = () => actionTypeCreator(type, asyncAction, extraArgument)
+```
+
 #### Parameters
 
 ​	`actionType:string` : An async action type.
@@ -680,17 +684,21 @@ export default App;
 
 ​	`asyncAction:{types:[pendingType,fulfilledType,rejectedType],asyncFunction,extraArgument}`
 
-The `reduxMiddleware` that is created by `asyncReduxMiddlewareCreator` will **only** response the `action` with a `types` property .In fact, the idea behind `react-redux-async-hooks` is that dispatch a corresponding actcion (pendingType, fulfilledType, rejectedType) when the **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** that `asyncFunction` returns is in a different state(pending,fulfilled,rejected).
+The `reduxMiddleware` that is created by `asyncReduxMiddlewareCreator` will **only** response the `action` with a `types` property . In fact, the idea behind `react-redux-async-hooks` is that dispatch a corresponding action(pendingType, fulfilledType, rejectedType) when the **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** that `asyncFunction` returns is in a different state(pending,fulfilled,rejected).
 
-**Note**: asyncFunction must be a function that returns a **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)**.
+**Note**: `asyncFunction` must be a function that returns a **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)**.
 
 
 
 ### asyncReduxMiddlewareCreator
 
+```js
+const asyncReduxMiddleware = asyncReduxMiddleware(fullfilledHandler, rejectedHandler)
+```
+
 #### Parameters
 
-​	`fullfilledHandler?:(resolveValue,action,dispatch,getState) => void`:If the promise has already been fulfilled, this handler will be called.
+​	`fullfilledHandler?:(resolveValue, action, dispatch, getState) => void`: If the promise has already been fulfilled, this handler will be called.
 
 ​	`rejectedHandler?:( rejectedReason, action, dispatch, getState) => void`: If the promise has already been rejected, this handler will be called.
 
@@ -702,60 +710,84 @@ The `reduxMiddleware` that is created by `asyncReduxMiddlewareCreator` will **on
 
 Customize your `asyncrReduxMiddeware`.
 
+
+
 ### asyncStateReducer
 
-A [reducer](https://redux.js.org/basics/reducers) that specifies how the application's state changes in response to async action to the store. This reducer will record the state(pending, fulfilled, rejected) that each async action is in.
+A [reducer](https://redux.js.org/basics/reducers) that specifies how the application's state changes in response to async action to the store.
+
+
 
 ### useIsAsyncPendingSelector
 
-#### Parameters
-
-​	`actionTypes:string[]`: A group of async action types that are kept track of.
-
-#### Return
-
-​	`isAsyncPending:boolen`: `Ture` means that **at least one** async action among `actionTypes` is in **pending** .`False` means that **all** async actions among `actionTypes` are in `fullfiled` or `rejected`
-
-### useOnAsyncFulfilled
+```js
+const isPending = useIsAsyncPendingSelector(actionTypes, asyncStateReducerKey)
+```
 
 #### Parameters
 
-​	`actionTypes:string[]`: A group of async action types that are kept track of.
+​	`actionTypes:string[]`: A group of async actions that are kept track of.
 
-​	`handler:(asyncType)=>void`: Run when any one of async actions that are represented by `actionTypes`
-
-changes from **pending** to **fulfilled**. The `asyncType` is passed to `handler` is the one that triggers the `handler`.
-
-​	`asyncStateReducerKey:string="asyncState"` :Under the hood, `useOnAsyncFulfilled` tries to get async action states by
+​	`asyncStateReducerKey:string="asyncState"` : Under the hood, `useIsAsyncPendingSelector` tries to get async action states by
 
 ```js
 //https://react-redux.js.org/api/hooks#useselector
-useSelector(state => state[asyncState]);
+useSelector(state => state[asyncStateReducerKey]);
 ```
 
-So you have to ensure `asyncStateReducerKey` same with the key that is passed to `combinReducer` for `asyncSateReducer` .
+**So you have to ensure `asyncStateReducerKey` same with the key that is passed to `combinReducers` for `asyncSateReducer` .**
+
+#### Return
+
+​	`isAsyncPending:boolen`: `True` means that **at least one** among `asyncTypes` is in **pending** .  `False` means that **all** in `asyncTypes` are in `fulfilled` or `rejected`.
+
+
+
+### useOnAsyncFulfilled
+
+```js
+useOnAsyncFulfilled(actionTypes, handler, asyncStateReducerKey)
+```
+
+#### Parameters
+
+​	`actionTypes:string[]`: A group of async actions that are kept track of.
+
+​	`handler:(asyncType)=>void`: Run when any one of  `actionTypes` changes from **pending** to **fulfilled**. The `asyncType` is passed to `handler` is the one that triggers the `handler`.
+
+​	`asyncStateReducerKey:string="asyncState"` : Same with this parameter in `useIsAsyncPendingSelector`.
 
 #### Return
 
 ​	`void`
 
+
+
 ### useOnAsyncRejected
+
+```js
+useOnAsyncRejected(actionTypes, handler, asyncStateReducerKey)
+```
 
 #### Parameters
 
 ​	`actionTypes:string[]`: A group of async action types that are kept track of.
 
-​	`handler:(actionType)=>void`: Run when any one of async actions that are represented by `actionTypes`
+​	`handler:(actionType)=>void`: Run when one of  `actionTypes `changes from **pending** to **rejected**. The `actionType` is passed to `handler` is the one that triggers the `handler`.
 
-changes from **pending** to **rejected**. The `actionType` is passed to `handler` is the one that triggers the `handler`.
-
-​	`asyncStateReducerKey="asyncState"`: Same with this parameter in `useOnAsyncFulfilled`.
+​	`asyncStateReducerKey="asyncState"`: Same with this parameter in `useIsAsyncPendingSelector`.
 
 #### Return
 
 ​	`void`
 
+
+
 ### fulfilledTypeCreator
+
+```js
+const fulfilledType = fulfilledTypeCreator(actionType)
+```
 
 #### Parameters
 
@@ -763,17 +795,23 @@ changes from **pending** to **rejected**. The `actionType` is passed to `handler
 
 #### Return
 
-​	`asyncFulfilledType:string`: An async action type that you can use in your reducers to catch up the async action when it is in **fulfilled**.
+​	`asyncFulfilledType:string`: An async action type that you can use in your **reducers** to catch up the async action when it is in **fulfilled**.
+
+
 
 ### rejectedTypeCreator
 
+```js
+const rejectedType = rejectedTypeCreator(actionType)
+```
+
 #### Parameters
 
 ​	`actionType:string`: An action type that represents an async action.
 
 #### Return
 
-​	`asyncFulfilledType:string`: An async action type that you can use in your reducers to catch up the async action when it is in **rejected**.
+​	`asyncFulfilledType:string`: An async action type that you can use in your **reducers** to catch up the async action when it is in **rejected**.
 
 ### Todo
 
