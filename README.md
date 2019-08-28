@@ -10,7 +10,7 @@ A tool to keep track of redux async action states, based on [react-redux](https:
 - [Installation](#installation)
 - [Example](#example)
   - [Basis example](#basis-example)
-  - [Advanced example: fetch data and handler error](#advanced-example-fetch-data-and-handler-error)
+  - [Advanced example: fetch data and handle error](#advanced-example-fetch-data-and-handle-error)
   
 - [API](#api)
   - [`asyncActionCreator`](#asyncActionCreator)
@@ -263,7 +263,7 @@ export default App;
 
 
 
-### Advanced example: fetch data and handler error
+### Advanced example: fetch data and handle error
 
 There are two examples. One uses the react-redux-async-hooks, the other only uses hooks. Both examples implement the same goal that fetch data and, if successful, notify the data, otherwise notify the error message.
 
