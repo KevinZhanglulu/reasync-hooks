@@ -7,6 +7,7 @@ export const useIsAsyncPendingSelector = (
   actionTypes: string[],
   asyncStateReducerKey = "asyncState"
 ) => {
+  // TODO: need a better way to avoid re-render
   const actionTypesMemo = useMemo(() => actionTypes, [...actionTypes]);
 
   const pendingSelector = useCallback(

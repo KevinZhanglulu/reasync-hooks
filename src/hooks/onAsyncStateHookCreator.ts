@@ -11,7 +11,7 @@ export const onAsyncStateHookCreator = (asyncStateType: string) => (
   And the return value is a same("oldValue===newValue" is true) object between re-renders,
   unless any one of async action states that are represented by actionTypes changes from pending to fulfilled,
   in which the return value is a new("oldValue===newValue" is false) object.
-  Note: the return value is initialized to "{actionType:null}".
+  Note: the return value is initialized to "{type:null}".
   */
   const asyncAction = useAsyncStateSelector(
     actionTypes,

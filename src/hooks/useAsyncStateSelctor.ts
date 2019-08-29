@@ -11,7 +11,7 @@ export const useAsyncStateSelector = (
   const asyncAction = useRef<{ type: string | null }>({
     type: null
   });
-
+  //TODO: need a better way to avoid re-render
   const actionTypesMemo = useMemo(() => actionTypes, [...actionTypes]);
 
   const asyncStateSelector = useCallback(
