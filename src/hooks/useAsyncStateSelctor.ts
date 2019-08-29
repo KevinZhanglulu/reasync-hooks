@@ -16,7 +16,7 @@ export const useAsyncStateSelector = (
 
   const asyncStateSelector = useCallback(
     (state: any) => {
-      if (!state[asyncStateReducerKey])
+      if (!state.hasOwnProperty(asyncStateReducerKey))
         throw new Error(
           `You may not pass {${asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
         );
