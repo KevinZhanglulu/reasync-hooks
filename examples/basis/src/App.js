@@ -17,13 +17,13 @@ import { Button, message } from "antd";
 Step 1: create store
  */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator();
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator();
 const rootReducer = combineReducers({
   asyncState: asyncStateReducer
 });
 const store = createStore(
     rootReducer,
-    composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+    composeEnhancers(applyMiddleware(asyncReduxMiddleware))
 );
 
 /*

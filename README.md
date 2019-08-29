@@ -52,13 +52,13 @@ import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import { asyncReduxMiddlewareCreator , asyncStateReducer } from "react-redux-async-hooks";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator();
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator();
 const rootReducer = combineReducers({
   asyncState: asyncStateReducer
 });
 const store = createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+  composeEnhancers(applyMiddleware(asyncReduxMiddleware))
 );
 ```
 
@@ -178,13 +178,13 @@ import ("./App.css");
 Step 1: create store
  */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator();
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator();
 const rootReducer = combineReducers({
   asyncState: asyncStateReducer
 });
 const store = createStore(
     rootReducer,
-    composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+    composeEnhancers(applyMiddleware(asyncReduxMiddleware))
 );
 
 /*
@@ -361,7 +361,7 @@ const rejectedHandler = (rejectedReason, action, dispatch) => {
     error: rejectedReason
   });
 };
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator(
   fulfilledHandler,
   rejectedHandler
 );
@@ -446,7 +446,7 @@ const rootReducer = combineReducers({
 });
 export const store = createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+  composeEnhancers(applyMiddleware(asyncReduxMiddleware))
 );
 ```
 
@@ -546,7 +546,7 @@ const rejectedHandler = (rejectedReason, action, dispatch) => {
     error: rejectedReason
   });
 };
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator(
     fulfilledHandler,
     rejectedHandler
 );
@@ -610,7 +610,7 @@ const rootReducer = combineReducers({
 });
 export const store = createStore(
     rootReducer,
-    composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+    composeEnhancers(applyMiddleware(asyncReduxMiddleware))
 );
 
 /*

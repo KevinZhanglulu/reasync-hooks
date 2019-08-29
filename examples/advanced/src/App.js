@@ -27,7 +27,7 @@ const rejectedHandler = (rejectedReason, action, dispatch) => {
     error: rejectedReason
   });
 };
-const asyncReduxMiddleWare = asyncReduxMiddlewareCreator(
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator(
   fulfilledHandler,
   rejectedHandler
 );
@@ -91,7 +91,7 @@ const rootReducer = combineReducers({
 });
 export const store = createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(asyncReduxMiddleWare))
+  composeEnhancers(applyMiddleware(asyncReduxMiddleware))
 );
 
 /*
