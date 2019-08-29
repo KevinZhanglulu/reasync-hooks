@@ -17,7 +17,7 @@ export const useIsAsyncPendingSelector = (
         );
       return actionTypesMemo.some(actionType => {
         if (state[asyncStateReducerKey])
-          return state.asyncState[actionType] === PENDING;
+          return state[asyncStateReducerKey][actionType] === PENDING;
         return false;
       });
     },
