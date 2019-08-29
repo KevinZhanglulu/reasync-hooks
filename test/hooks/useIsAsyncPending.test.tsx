@@ -77,6 +77,19 @@ describe("React", () => {
         });
         expect(result.current).toEqual(false);
       });
+      it("should throw error when asyncStateReducerKey is not same as with the key for asyncReducer in combineReducers", function() {
+        const store = createStore(
+          combineReducers({
+            asyncState: asyncStateReducer
+          }),
+          applyMiddleware(asyncReduxMiddlewareCreator())
+        );
+        const { result } = renderHook(
+          () => useIsAsyncPendingSelector([actionType], "wrongReducerKey"),
+          { wrapper: props => <Provider store={store} {...props} /> }
+        );
+        expect(result.error).toBeInstanceOf(Error);
+      });
     });
   });
 });

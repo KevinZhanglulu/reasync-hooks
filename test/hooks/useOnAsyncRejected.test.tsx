@@ -57,7 +57,7 @@ describe("React", () => {
         expect(renderedItems).toEqual([actionType]);
       });
 
-      it("should get resolve value", async function() {
+      it("should get rejected reason", async function() {
         const rejectedHandler: AsyncHandler = (
           rejectedReason,
           action,
@@ -154,6 +154,20 @@ describe("React", () => {
           store.dispatch({ type: pendingTypeCreator(actionType) });
         });
         expect(count).toEqual(1);
+      });
+
+      it("should throw error when asyncStateReducerKey is not same as with the key for asyncReducer in combineReducers", function() {
+        const store = createStore(
+          combineReducers({
+            asyncState: asyncStateReducer
+          }),
+          applyMiddleware(asyncReduxMiddlewareCreator())
+        );
+        const { result } = renderHook(
+          () => useOnAsyncRejected([actionType], () => {}, "wrongReducerKey"),
+          { wrapper: props => <Provider store={store} {...props} /> }
+        );
+        expect(result.error).toBeInstanceOf(Error);
       });
     });
   });
