@@ -11,7 +11,7 @@ import { act, renderHook } from "@testing-library/react-hooks";
 import { Provider } from "react-redux";
 import * as React from "react";
 import { PENDING } from "../../src/utils/constant";
-import { rejectedTypeCreator } from "../../src/actions/asyncActionTypeCreators";
+import { rejectedTypeCreator } from "../../src";
 
 describe("React", () => {
   describe("hooks", () => {

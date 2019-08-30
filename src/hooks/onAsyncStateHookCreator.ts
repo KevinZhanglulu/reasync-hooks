@@ -9,7 +9,7 @@ export const onAsyncStateHookCreator = (asyncStateType: string) => (
   /*
   Under the hood,the return value of useAsyncStateSelector is the .current property of an ref object that will be persisted for the full lifetime of the component.
   And the return value is a same("oldValue===newValue" is true) object between re-renders,
-  unless any one of async action states that are represented by actionTypes changes from pending to fulfilled,
+  unless any one of async action states that are represented by actionTypes changes from pending to fulfilled or rejected,
   in which the return value is a new("oldValue===newValue" is false) object.
   Note: the return value is initialized to "{type:null}".
   */
@@ -24,5 +24,5 @@ export const onAsyncStateHookCreator = (asyncStateType: string) => (
   */
   useEffect(() => {
     if (asyncAction.type) handler(asyncAction.type);
-  }, [asyncAction]);
+  }, [asyncAction, handler]);
 };

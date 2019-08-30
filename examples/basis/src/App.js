@@ -9,7 +9,7 @@ import {
   useOnAsyncFulfilled,
   useOnAsyncRejected,
   asyncActionCreator
-} from "react-redux-async-hooks";
+} from "re-async";
 import { Provider, useDispatch } from "react-redux";
 import { Button, message } from "antd";
 
