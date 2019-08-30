@@ -24,5 +24,5 @@ export const onAsyncStateHookCreator = (asyncStateType: string) => (
   */
   useEffect(() => {
     if (asyncAction.type) handler(asyncAction.type);
-  }, [asyncAction, handler]);
+  }, [asyncAction]);
 };
