@@ -1,9 +1,9 @@
-# Re-Async
+# Reasync-hooks
 
-![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg) [![npm version](https://img.shields.io/npm/v/re-async.svg?style=flat)](https://www.npmjs.com/package/re-async) [![CircleCI](https://circleci.com/gh/KevinZhanglulu/re-async.svg?style=svg)](https://circleci.com/gh/KevinZhanglulu/re-async) 
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg) [![npm version](https://img.shields.io/npm/v/reasync-hooks.svg?style=flat)](https://www.npmjs.com/package/reasync-hooks) [![CircleCI](https://circleci.com/gh/KevinZhanglulu/reasync-hooks.svg?style=svg)](https://circleci.com/gh/KevinZhanglulu/reasync-hooks) 
 
 
-A tool to keep track of redux async action states, based on [react-redux](https://react-redux.js.org/) and [react hooks](https://reactjs.org/docs/hooks-intro.html).
+A library to keep track of redux async action states, based on [react-redux](https://react-redux.js.org/) and [react hooks](https://reactjs.org/docs/hooks-intro.html).
 
 ## Table of Contents
 
@@ -29,7 +29,7 @@ A tool to keep track of redux async action states, based on [react-redux](https:
 React Redux Async Hooks requires **React 16.8.3 and React-redux 7.10 or later.**
 
 ```
-npm install --save re-async
+npm install --save reasync-hooks
 ```
 
 This assumes that you’re using [npm](http://npmjs.com/) package manager
@@ -41,7 +41,7 @@ modules](https://webpack.js.org/api/module-methods/#commonjs).
 
 ### Basis example
 
-You can play around with the following **example** in [this codesandbox](https://codesandbox.io/s/github/KevinZhanglulu/re-async/tree/master/examples/basis):
+You can play around with the following **example** in [this codesandbox](https://codesandbox.io/s/github/KevinZhanglulu/reasync-hooks/tree/master/examples/basis):
 
 #### **Step 1**
 
@@ -49,7 +49,7 @@ You can play around with the following **example** in [this codesandbox](https:/
 
 ```js
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
-import { asyncReduxMiddlewareCreator , asyncStateReducer } from "re-async";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "reasync-hooks";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const asyncReduxMiddleware = asyncReduxMiddlewareCreator();
@@ -67,7 +67,7 @@ const store = createStore(
 ##### Create async actions
 
 ```js
-import { asyncActionCreator } from "re-async";
+import { asyncActionCreator } from "reasync-hooks";
 
 const FULFILLED_ACTION = "FULFILLED_ACTION";
 const REJECTED_ACTION = "REJECTED_ACTION";
@@ -102,7 +102,7 @@ import {
   useIsAsyncPendingSelector,
   useOnAsyncFulfilled,
   useOnAsyncRejected
-} from "re-async";
+} from "reasync-hooks";
 import { useDispatch } from "react-redux";
 import { Button, message } from "antd";
 
@@ -168,7 +168,7 @@ import {
   useOnAsyncFulfilled,
   useOnAsyncRejected,
   asyncActionCreator
-} from "re-async";
+} from "reasync-hooks";
 import { Provider, useDispatch } from "react-redux";
 import { Button, message } from "antd";
 import("antd/dist/antd.css");
@@ -265,11 +265,11 @@ export default App;
 
 ### Advanced example: fetch data and handle error
 
-There are two examples. One uses the **re-async**, the other **only** uses **hooks**. Both examples implement the same goal that fetch data and, if successful, notify the data, otherwise notify the error message.
+There are two examples. One uses the **reasync-hooks**, the other **only** uses **hooks**. Both examples implement the same goal that fetch data and, if successful, notify the data, otherwise notify the error message.
 
 #### 1.Only use react hooks
 
-**Note**: This example is only used to help users understand the usage of re-async and is not recommended.
+**Note**: This example is only used to help users understand the usage of reasync-hooks and is not recommended.
 
 ```jsx
 import React, { useEffect, useState } from "react";
@@ -341,16 +341,16 @@ const ExampleOnlyUseHooks = () => {
 };
 ```
 
-#### 2.Use re-async
+#### 2.Use reasync-hooks
 
-You can play around with the following **example** in [this codesandbox](https://codesandbox.io/s/github/KevinZhanglulu/re-async/tree/master/examples/advanced):
+You can play around with the following **example** in [this codesandbox](https://codesandbox.io/s/github/KevinZhanglulu/reasync-hooks/tree/master/examples/advanced):
 
 #### Step 1
 
 ##### Customize the redux  middleware
 
 ```jsx
-import { asyncReduxMiddlewareCreator , asyncStateReducer } from "re-async";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "reasync-hooks";
 
 const fulfilledHandler = (resolveValue, action, dispatch) => {
   dispatch({ ...action, data: resolveValue });
@@ -372,7 +372,7 @@ const asyncReduxMiddleware = asyncReduxMiddlewareCreator(
 ##### Create async actions
 
 ```js
-import { asyncStateReducer, asyncActionCreator } from "re-async";
+import { asyncStateReducer, asyncActionCreator } from "reasync-hooks";
 
 const FULFILLED_ACTION = "FULFILLED_ACTION";
 const REJECTED_ACTION = "REJECTED_ACTION";
@@ -409,7 +409,7 @@ const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
 import {
   fulfilledTypeCreator,
   rejectedTypeCreator
-} from "re-async";
+} from "reasync-hooks";
 
 const fulfilledReducer = (state = {}, action) => {
   if (action.type === fulfilledTypeCreator(FULFILLED_ACTION)) {
@@ -436,7 +436,7 @@ const errorReducer = (state = {}, action) => {
 
 ```js
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
-import { asyncReduxMiddlewareCreator , asyncStateReducer } from "re-async";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "reasync-hooks";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const rootReducer = combineReducers({
@@ -459,7 +459,7 @@ import {
   useIsAsyncPendingSelector,
   useOnAsyncFulfilled,
   useOnAsyncRejected
-} from "re-async";
+} from "reasync-hooks";
 import { useDispatch, useStore } from "react-redux";
 import { Button, message } from "antd";
 
@@ -528,7 +528,7 @@ import {
   useOnAsyncFulfilled,
   useOnAsyncRejected,
   asyncActionCreator
-} from "re-async";
+} from "reasync-hooks";
 import { Provider, useDispatch, useStore } from "react-redux";
 import { Button, message } from "antd";
 import("antd/dist/antd.css");

@@ -11,7 +11,7 @@ import {
   useOnAsyncFulfilled,
   useOnAsyncRejected,
   asyncActionCreator
-} from "re-async";
+} from "reasync-hooks";
 import { Provider, useDispatch, useStore } from "react-redux";
 import { Button, message } from "antd";
 
