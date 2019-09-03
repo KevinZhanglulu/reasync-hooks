@@ -405,6 +405,8 @@ const asyncRejectedAction = asyncActionCreator(REJECTED_ACTION, fetchDataError);
 
 ##### Create reducers
 
+**Note**: To reduce boilerplate, you can use [createReducer](https://redux.js.org/recipes/structuring-reducers/refactoring-reducer-example#reducing-boilerplate).
+
 ```js
 import {
   fulfilledTypeCreator,
