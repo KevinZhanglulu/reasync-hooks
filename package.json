@@ -1,6 +1,6 @@
 {
   "name": "reasync-hooks",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A library to help developer keep track of redux async action states.",
   "homepage": "https://github.com/KevinZhanglulu/reasync-hooks",
   "repository": "github:KevinZhanglulu/reasync-hooks",
