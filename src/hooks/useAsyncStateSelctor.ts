@@ -16,10 +16,11 @@ export const useAsyncStateSelector = (
 
   const asyncStateSelector = useCallback(
     (state: any) => {
-      if (!state.hasOwnProperty(asyncStateReducerKey))
-        throw new Error(
-          `You may not pass {${asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
-        );
+      if (process.env.NODE_ENV !== "production")
+        if (!state.hasOwnProperty(asyncStateReducerKey))
+          throw new Error(
+            `You may not pass {${asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
+          );
       let asyncState = {};
       actionTypesMemo.forEach(actionType => {
         asyncState = {

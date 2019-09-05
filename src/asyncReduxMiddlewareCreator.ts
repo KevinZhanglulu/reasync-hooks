@@ -21,16 +21,19 @@ export const asyncReduxMiddlewareCreator = (
     dispatch({
       type: pendingType
     });
-    if (typeof fulfilledHandler !== "function") {
-      throw new Error("Expected the fulfilledHandler to be a function.");
-    }
-    if (typeof rejectedHandler !== "function") {
-      throw new Error("Expected the rejectedHandler to be a function.");
-    }
-    if (typeof asyncFunction !== "function") {
-      throw new Error(
-        "Expected the asyncFunction to be a function that returns a Promise."
-      );
+
+    if (process.env.NODE_ENV !== "production") {
+      if (typeof fulfilledHandler !== "function") {
+        throw new Error("Expected the fulfilledHandler to be a function.");
+      }
+      if (typeof rejectedHandler !== "function") {
+        throw new Error("Expected the rejectedHandler to be a function.");
+      }
+      if (typeof asyncFunction !== "function") {
+        throw new Error(
+          "Expected the asyncFunction to be a function that returns a Promise."
+        );
+      }
     }
     return asyncFunction(getState)
       .then((resolvedValue: any) =>

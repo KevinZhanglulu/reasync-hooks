@@ -12,10 +12,11 @@ export const useIsAsyncPendingSelector = (
 
   const pendingSelector = useCallback(
     (state: any) => {
-      if (!state.hasOwnProperty(asyncStateReducerKey))
-        throw new Error(
-          `You may not pass {${asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
-        );
+      if (process.env.NODE_ENV !== "production")
+        if (!state.hasOwnProperty(asyncStateReducerKey))
+          throw new Error(
+            `You may not pass {${asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
+          );
       return actionTypesMemo.some(actionType => {
         if (state.hasOwnProperty(asyncStateReducerKey))
           return state[asyncStateReducerKey][actionType] === PENDING;
