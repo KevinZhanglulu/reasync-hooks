@@ -19,7 +19,16 @@ export const asyncReduxMiddlewareCreator = (
 ): Middleware => ({ getState, dispatch }) => {
   return next => action => {
     const { type, asyncFunction, ...payload } = action;
-    if (!asyncFunction) return next(action);
+    if (typeof asyncFunction !== "function") return next(action);
+    const promise = asyncFunction(getState);
+
+    if (process.env.NODE_ENV !== "production") {
+      if (!isPromise(promise))
+        throw new Error(
+          "Expected the return of asyncFunction to be a Promise."
+        );
+    }
+
     const {
       fulfilledHandler = defaultHandler,
       rejectedHandler = defaultHandler
@@ -36,13 +45,8 @@ export const asyncReduxMiddlewareCreator = (
       if (typeof rejectedHandler !== "function") {
         throw new Error("Expected the rejectedHandler to be a function.");
       }
-      if (typeof asyncFunction !== "function") {
-        throw new Error(
-          "Expected the asyncFunction to be a function that returns a Promise."
-        );
-      }
     }
-    return asyncFunction(getState)
+    return promise
       .then((resolvedValue: any) =>
         fulfilledHandler(
           resolvedValue,
