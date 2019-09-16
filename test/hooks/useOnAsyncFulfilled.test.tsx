@@ -1,10 +1,8 @@
 import { applyMiddleware, combineReducers, createStore, Reducer } from "redux";
 import * as rtl from "@testing-library/react";
 import {
-  asyncActionCreator,
   asyncReduxMiddlewareCreator,
   asyncStateReducer,
-  fulfilledTypeCreator,
   useOnAsyncFulfilled
 } from "../../src";
 import { act, renderHook } from "@testing-library/react-hooks";
@@ -12,9 +10,10 @@ import { Provider, useStore } from "react-redux";
 import * as React from "react";
 import { AsyncHandler } from "../../src/asyncReduxMiddlewareCreator";
 import {
+  fulfilledTypeCreator,
   pendingTypeCreator,
   rejectedTypeCreator
-} from "../../src/actions/asyncActionTypeCreators";
+} from "../utils";
 
 describe("React", () => {
   describe("hooks", () => {
@@ -44,15 +43,13 @@ describe("React", () => {
           { wrapper: props => <Provider store={store} {...props} /> }
         );
         await act(() =>
-          store.dispatch<any>(
-            asyncActionCreator(
-              actionType,
-              () =>
-                new Promise(function(resolve) {
-                  resolve("");
-                })
-            )
-          )
+          store.dispatch<any>({
+            type: actionType,
+            asyncFunction: () =>
+              new Promise(function(resolve) {
+                resolve("");
+              })
+          })
         );
         expect(renderedItems).toEqual([actionType]);
       });
@@ -65,7 +62,9 @@ describe("React", () => {
         ) => {
           return dispatch({ ...action, data: resolveValue });
         };
-        const reduxMiddleware = asyncReduxMiddlewareCreator(fulfilledHandler);
+        const reduxMiddleware = asyncReduxMiddlewareCreator({
+          fulfilledHandler
+        });
 
         const resolveReducer: Reducer = (state = {}, action) => {
           if (action.type === fulfilledTypeCreator(actionType))
@@ -92,15 +91,13 @@ describe("React", () => {
         );
 
         await act(() =>
-          store.dispatch<any>(
-            asyncActionCreator(
-              actionType,
-              () =>
-                new Promise(function(resolve) {
-                  resolve("data");
-                })
-            )
-          )
+          store.dispatch<any>({
+            type: actionType,
+            asyncFunction: () =>
+              new Promise(function(resolve) {
+                resolve("data");
+              })
+          })
         );
         expect(renderedItems).toEqual(["data"]);
       });
@@ -122,15 +119,13 @@ describe("React", () => {
           { wrapper: props => <Provider store={store} {...props} /> }
         );
         await act(() =>
-          store.dispatch<any>(
-            asyncActionCreator(
-              actionType,
-              () =>
-                new Promise(function(resolve) {
-                  resolve("");
-                })
-            )
-          )
+          store.dispatch<any>({
+            type: actionType,
+            asyncFunction: () =>
+              new Promise(function(resolve) {
+                resolve("");
+              })
+          })
         );
         expect(count).toEqual(1);
 

@@ -1,20 +1,20 @@
 import * as rtl from "@testing-library/react";
 import { applyMiddleware, combineReducers, createStore, Reducer } from "redux";
 import {
-  asyncActionCreator,
   asyncReduxMiddlewareCreator,
   asyncStateReducer,
-  fulfilledTypeCreator,
   useOnAsyncRejected
 } from "../../src";
 import { act, renderHook } from "@testing-library/react-hooks";
 import { Provider, useStore } from "react-redux";
 import { AsyncHandler } from "../../src/asyncReduxMiddlewareCreator";
+
+import * as React from "react";
 import {
+  fulfilledTypeCreator,
   pendingTypeCreator,
   rejectedTypeCreator
-} from "../../src/actions/asyncActionTypeCreators";
-import * as React from "react";
+} from "../utils";
 
 describe("React", () => {
   describe("hooks", () => {
@@ -44,15 +44,13 @@ describe("React", () => {
           { wrapper: props => <Provider store={store} {...props} /> }
         );
         await act(() =>
-          store.dispatch<any>(
-            asyncActionCreator(
-              actionType,
-              () =>
-                new Promise(function(resolve, reject) {
-                  reject("");
-                })
-            )
-          )
+          store.dispatch<any>({
+            type: actionType,
+            asyncFunction: () =>
+              new Promise(function(resolve, reject) {
+                reject("");
+              })
+          })
         );
         expect(renderedItems).toEqual([actionType]);
       });
@@ -65,10 +63,9 @@ describe("React", () => {
         ) => {
           return dispatch({ ...action, error: rejectedReason });
         };
-        const reduxMiddleware = asyncReduxMiddlewareCreator(
-          (value, action, dispatch) => dispatch(action),
+        const reduxMiddleware = asyncReduxMiddlewareCreator({
           rejectedHandler
-        );
+        });
 
         const errorReducer: Reducer = (state = {}, action) => {
           if (action.type === rejectedTypeCreator(actionType))
@@ -95,15 +92,13 @@ describe("React", () => {
         );
 
         await act(() =>
-          store.dispatch<any>(
-            asyncActionCreator(
-              actionType,
-              () =>
-                new Promise(function(resolve, reject) {
-                  reject("error");
-                })
-            )
-          )
+          store.dispatch<any>({
+            type: actionType,
+            asyncFunction: () =>
+              new Promise(function(resolve, reject) {
+                reject("error");
+              })
+          })
         );
         expect(renderedItems).toEqual(["error"]);
       });
@@ -128,15 +123,13 @@ describe("React", () => {
         );
 
         await act(() =>
-          store.dispatch<any>(
-            asyncActionCreator(
-              actionType,
-              () =>
-                new Promise(function(resolve, reject) {
-                  reject("");
-                })
-            )
-          )
+          store.dispatch<any>({
+            type: actionType,
+            asyncFunction: () =>
+              new Promise(function(resolve, reject) {
+                reject("");
+              })
+          })
         );
         expect(count).toEqual(1);
 

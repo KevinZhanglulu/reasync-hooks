@@ -11,19 +11,21 @@ export type AsyncHandler = (
 const defaultHandler: AsyncHandler = (value, action, dispatch) =>
   dispatch(action);
 
-export const asyncReduxMiddlewareCreator = (config: {
-  fulfilledHandler?: AsyncHandler;
-  rejectedHandler?: AsyncHandler;
-}): Middleware => ({ getState, dispatch }) => {
+export const asyncReduxMiddlewareCreator = (
+  config: {
+    fulfilledHandler?: AsyncHandler;
+    rejectedHandler?: AsyncHandler;
+  } = {}
+): Middleware => ({ getState, dispatch }) => {
   return next => action => {
-    const { type, asyncFunction, ...extraArgument } = action;
-    if (!asyncFunction || !isPromise(asyncFunction)) return next(action);
+    const { type, asyncFunction, ...payload } = action;
+    if (!asyncFunction) return next(action);
     const {
       fulfilledHandler = defaultHandler,
       rejectedHandler = defaultHandler
     } = config;
     const actionType = asyncActionTypeCreator(type);
-    dispatch({
+    next({
       type: actionType.pending
     });
 
@@ -44,7 +46,7 @@ export const asyncReduxMiddlewareCreator = (config: {
       .then((resolvedValue: any) =>
         fulfilledHandler(
           resolvedValue,
-          { ...extraArgument, type: actionType.fulfilled },
+          { ...payload, type: actionType.fulfilled },
           dispatch,
           getState
         )
@@ -52,7 +54,7 @@ export const asyncReduxMiddlewareCreator = (config: {
       .catch((rejectedReason: any) =>
         rejectedHandler(
           rejectedReason,
-          { ...extraArgument, type: actionType.rejected },
+          { ...payload, type: actionType.rejected },
           dispatch,
           getState
         )

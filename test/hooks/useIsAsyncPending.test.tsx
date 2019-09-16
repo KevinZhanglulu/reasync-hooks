@@ -1,17 +1,15 @@
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
 import * as rtl from "@testing-library/react";
 import {
-  asyncActionCreator,
   asyncReduxMiddlewareCreator,
   asyncStateReducer,
-  fulfilledTypeCreator,
   useIsAsyncPendingSelector
 } from "../../src";
 import { act, renderHook } from "@testing-library/react-hooks";
 import { Provider } from "react-redux";
 import * as React from "react";
 import { PENDING } from "../../src/utils/constant";
-import { rejectedTypeCreator } from "../../src";
+import { fulfilledTypeCreator, rejectedTypeCreator } from "../utils";
 
 describe("React", () => {
   describe("hooks", () => {
@@ -36,20 +34,18 @@ describe("React", () => {
         );
         expect(result.current).toEqual(false);
         await act(async () => {
-          await store.dispatch<any>(
-            asyncActionCreator<{ asyncState: { [key: string]: string } }>(
-              actionType,
-              getState => {
-                //Should be expect(result.current).toEqual(true)
-                expect(getState().asyncState[actionType]).toEqual(PENDING);
-                return new Promise(function(resolve) {
-                  setTimeout(() => {
-                    resolve("");
-                  }, 1000);
-                });
-              }
-            )
-          );
+          await store.dispatch<any>({
+            type: actionType,
+            asyncFunction: (getState: Function) => {
+              //Should be expect(result.current).toEqual(true)
+              expect(getState().asyncState[actionType]).toEqual(PENDING);
+              return new Promise(function(resolve) {
+                setTimeout(() => {
+                  resolve("");
+                }, 1000);
+              });
+            }
+          });
         });
         expect(result.current).toEqual(false);
       });
