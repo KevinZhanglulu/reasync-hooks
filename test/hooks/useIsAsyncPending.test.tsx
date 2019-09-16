@@ -34,13 +34,13 @@ describe("React", () => {
         );
         expect(result.current).toEqual(false);
         await act(async () => {
-          await store.dispatch<any>({
+          await store.dispatch({
             type: actionType,
             asyncFunction: (getState: Function) => {
               //Should be expect(result.current).toEqual(true)
-              expect(getState().asyncState[actionType]).toEqual(PENDING);
               return new Promise(function(resolve) {
                 setTimeout(() => {
+                  expect(getState().asyncState[actionType]).toEqual(PENDING);
                   resolve("");
                 }, 1000);
               });
@@ -63,9 +63,9 @@ describe("React", () => {
           { wrapper: props => <Provider store={store} {...props} /> }
         );
 
-        await act(async () =>
-          store.dispatch<any>({ type: fulfilledTypeCreator(actionType) })
-        );
+        await act(async () => {
+          store.dispatch({ type: fulfilledTypeCreator(actionType) });
+        });
         expect(result.current).toEqual(false);
 
         await act(async () => {

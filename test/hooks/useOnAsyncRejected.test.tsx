@@ -43,15 +43,15 @@ describe("React", () => {
           },
           { wrapper: props => <Provider store={store} {...props} /> }
         );
-        await act(() =>
-          store.dispatch<any>({
+        await act(async () => {
+          store.dispatch({
             type: actionType,
             asyncFunction: () =>
               new Promise(function(resolve, reject) {
                 reject("");
               })
-          })
-        );
+          });
+        });
         expect(renderedItems).toEqual([actionType]);
       });
 
@@ -91,15 +91,15 @@ describe("React", () => {
           { wrapper: props => <Provider store={store} {...props} /> }
         );
 
-        await act(() =>
-          store.dispatch<any>({
+        await act(async () => {
+          store.dispatch({
             type: actionType,
             asyncFunction: () =>
               new Promise(function(resolve, reject) {
                 reject("error");
               })
-          })
-        );
+          });
+        });
         expect(renderedItems).toEqual(["error"]);
       });
 
@@ -122,15 +122,15 @@ describe("React", () => {
           { wrapper: props => <Provider store={store} {...props} /> }
         );
 
-        await act(() =>
-          store.dispatch<any>({
+        await act(async () => {
+          store.dispatch({
             type: actionType,
             asyncFunction: () =>
               new Promise(function(resolve, reject) {
                 reject("");
               })
-          })
-        );
+          });
+        });
         expect(count).toEqual(1);
 
         await act(async () => {

@@ -42,15 +42,15 @@ describe("React", () => {
           },
           { wrapper: props => <Provider store={store} {...props} /> }
         );
-        await act(() =>
-          store.dispatch<any>({
+        await act(async () => {
+          store.dispatch({
             type: actionType,
             asyncFunction: () =>
               new Promise(function(resolve) {
                 resolve("");
               })
-          })
-        );
+          });
+        });
         expect(renderedItems).toEqual([actionType]);
       });
 
@@ -90,15 +90,15 @@ describe("React", () => {
           { wrapper: props => <Provider store={store} {...props} /> }
         );
 
-        await act(() =>
-          store.dispatch<any>({
+        await act(async () => {
+          store.dispatch({
             type: actionType,
             asyncFunction: () =>
               new Promise(function(resolve) {
                 resolve("data");
               })
-          })
-        );
+          });
+        });
         expect(renderedItems).toEqual(["data"]);
       });
 
@@ -118,15 +118,15 @@ describe("React", () => {
           },
           { wrapper: props => <Provider store={store} {...props} /> }
         );
-        await act(() =>
-          store.dispatch<any>({
+        await act(async () => {
+          store.dispatch({
             type: actionType,
             asyncFunction: () =>
               new Promise(function(resolve) {
                 resolve("");
               })
-          })
-        );
+          });
+        });
         expect(count).toEqual(1);
 
         await act(async () => {
