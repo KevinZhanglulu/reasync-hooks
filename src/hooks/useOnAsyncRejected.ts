@@ -1,4 +1,6 @@
 import { onAsyncStateHookCreator } from "./onAsyncStateHookCreator";
-import { REJECTED } from "../utils/constant";
+import { config } from "../config/";
 
-export const useOnAsyncRejected = onAsyncStateHookCreator(REJECTED);
+export const useOnAsyncRejected = onAsyncStateHookCreator(
+  config.suffix.rejected
+);

@@ -1,8 +1,13 @@
-import { FULFILLED, PENDING, REJECTED } from "./utils/constant";
 import { Reducer } from "./utils/reduxTypes";
+import { config } from "./config/";
 
 export const asyncStateReducer: Reducer = (state = {}, action) => {
   const { type } = action;
+  const {
+    fulfilled: FULFILLED,
+    pending: PENDING,
+    rejected: REJECTED
+  } = config.suffix;
 
   const re = new RegExp(`(.*)_(${PENDING}|${REJECTED}|${FULFILLED})`);
 

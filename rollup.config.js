@@ -90,8 +90,10 @@ export default [
       }),
       terser({
         compress: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           pure_getters: true,
           unsafe: true,
+          // eslint-disable-next-line @typescript-eslint/camelcase
           unsafe_comps: true,
           warnings: false
         }

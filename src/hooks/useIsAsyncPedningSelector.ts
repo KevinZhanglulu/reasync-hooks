@@ -1,29 +1,29 @@
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { PENDING } from "../utils/constant";
+import { config } from "../config/";
 
 // Return false only when all async action states are in rejected or fulfilled
-export const useIsAsyncPendingSelector = (
-  actionTypes: string[],
-  asyncStateReducerKey = "asyncState"
-) => {
+export const useIsAsyncPendingSelector = (actionTypes: string[]) => {
   // TODO: need a better way to avoid re-render
   const actionTypesMemo = useMemo(() => actionTypes, [...actionTypes]);
 
   const pendingSelector = useCallback(
     (state: any) => {
       if (process.env.NODE_ENV !== "production")
-        if (!state.hasOwnProperty(asyncStateReducerKey))
+        if (!state.hasOwnProperty(config.asyncStateReducerKey))
           throw new Error(
-            `You may not pass {${asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
+            `You may not pass {${config.asyncStateReducerKey}:asyncStateReducer} to combineReducers()`
           );
       return actionTypesMemo.some(actionType => {
-        if (state.hasOwnProperty(asyncStateReducerKey))
-          return state[asyncStateReducerKey][actionType] === PENDING;
+        if (state.hasOwnProperty(config.asyncStateReducerKey))
+          return (
+            state[config.asyncStateReducerKey][actionType] ===
+            config.suffix.pending
+          );
         return false;
       });
     },
-    [actionTypesMemo, asyncStateReducerKey]
+    [actionTypesMemo]
   );
 
   return useSelector<any, boolean>(pendingSelector);

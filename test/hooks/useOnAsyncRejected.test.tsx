@@ -154,10 +154,12 @@ describe("React", () => {
           combineReducers({
             asyncState: asyncStateReducer
           }),
-          applyMiddleware(asyncReduxMiddlewareCreator())
+          applyMiddleware(
+            asyncReduxMiddlewareCreator({ asyncStateReducerKey: "wrongKey" })
+          )
         );
         const { result } = renderHook(
-          () => useOnAsyncRejected([actionType], () => {}, "wrongReducerKey"),
+          () => useOnAsyncRejected([actionType], () => {}),
           { wrapper: props => <Provider store={store} {...props} /> }
         );
         expect(result.error).toBeInstanceOf(Error);

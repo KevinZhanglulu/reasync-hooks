@@ -1,5 +1,7 @@
 import { AnyAction, Dispatch, Middleware } from "./utils/reduxTypes";
 import { asyncActionTypeCreator, isPromise } from "./utils/helpers";
+import { setConfig } from "./index";
+import { config } from "./config";
 
 export type AsyncHandler = (
   valueOrReason: any, //resolved value or rejected reason
@@ -12,9 +14,11 @@ const defaultHandler: AsyncHandler = (value, action, dispatch) =>
   dispatch(action);
 
 export const asyncReduxMiddlewareCreator = (
-  config: {
+  configuration: {
     fulfilledHandler?: AsyncHandler;
     rejectedHandler?: AsyncHandler;
+    asyncStateReducerKey?: string;
+    suffix?: { pending?: string; fulfilled?: string; rejected?: string };
   } = {}
 ): Middleware => ({ getState, dispatch }) => {
   return next => action => {
@@ -31,8 +35,17 @@ export const asyncReduxMiddlewareCreator = (
 
     const {
       fulfilledHandler = defaultHandler,
-      rejectedHandler = defaultHandler
-    } = config;
+      rejectedHandler = defaultHandler,
+      asyncStateReducerKey,
+      suffix
+    } = configuration;
+    if (
+      asyncStateReducerKey &&
+      config.asyncStateReducerKey !== asyncStateReducerKey
+    )
+      setConfig({ asyncStateReducerKey });
+    if (suffix) setConfig({ suffix });
+
     const actionType = asyncActionTypeCreator(type);
     next({
       type: actionType.pending

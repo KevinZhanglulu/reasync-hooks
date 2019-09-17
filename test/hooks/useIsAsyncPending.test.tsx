@@ -8,8 +8,8 @@ import {
 import { act, renderHook } from "@testing-library/react-hooks";
 import { Provider } from "react-redux";
 import * as React from "react";
-import { PENDING } from "../../src/utils/constant";
 import { fulfilledTypeCreator, rejectedTypeCreator } from "../utils";
+import { config } from "../../src/config";
 
 describe("React", () => {
   describe("hooks", () => {
@@ -40,7 +40,9 @@ describe("React", () => {
               //Should be expect(result.current).toEqual(true)
               return new Promise(function(resolve) {
                 setTimeout(() => {
-                  expect(getState().asyncState[actionType]).toEqual(PENDING);
+                  expect(getState().asyncState[actionType]).toEqual(
+                    config.suffix.pending
+                  );
                   resolve("");
                 }, 1000);
               });
@@ -78,10 +80,12 @@ describe("React", () => {
           combineReducers({
             asyncState: asyncStateReducer
           }),
-          applyMiddleware(asyncReduxMiddlewareCreator())
+          applyMiddleware(
+            asyncReduxMiddlewareCreator({ asyncStateReducerKey: "wrongKey" })
+          )
         );
         const { result } = renderHook(
-          () => useIsAsyncPendingSelector([actionType], "wrongReducerKey"),
+          () => useIsAsyncPendingSelector([actionType]),
           { wrapper: props => <Provider store={store} {...props} /> }
         );
         expect(result.error).toBeInstanceOf(Error);

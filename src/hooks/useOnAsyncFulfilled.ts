@@ -1,4 +1,6 @@
 import { onAsyncStateHookCreator } from "./onAsyncStateHookCreator";
-import { FULFILLED } from "../utils/constant";
+import { config } from "../config/";
 
-export const useOnAsyncFulfilled = onAsyncStateHookCreator(FULFILLED);
+export const useOnAsyncFulfilled = onAsyncStateHookCreator(
+  config.suffix.fulfilled
+);

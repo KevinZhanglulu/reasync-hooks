@@ -3,8 +3,7 @@ import { useEffect } from "react";
 
 export const onAsyncStateHookCreator = (asyncStateType: string) => (
   actionTypes: string[],
-  handler: (asyncType: string) => void,
-  asyncStateReducerKey = "asyncState"
+  handler: (asyncType: string) => void
 ) => {
   /*
   Under the hood,the return value of useAsyncStateSelector is the .current property of an ref object that will be persisted for the full lifetime of the component.
@@ -13,11 +12,7 @@ export const onAsyncStateHookCreator = (asyncStateType: string) => (
   in which the return value is a new("oldValue===newValue" is false) object.
   Note: the return value is initialized to "{type:null}".
   */
-  const asyncAction = useAsyncStateSelector(
-    actionTypes,
-    asyncStateType,
-    asyncStateReducerKey
-  );
+  const asyncAction = useAsyncStateSelector(actionTypes, asyncStateType);
 
   /*
   The useEffect use "===" to compare the action Type between re-renders(https://reactjs.org/docs/hooks-effect.html#tip-optimizing-performance-by-skipping-effects).
