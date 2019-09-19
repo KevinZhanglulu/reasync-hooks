@@ -14,9 +14,9 @@ A library to keep track of redux async action states, based on [react-redux](htt
   
 - [API](#api)
   - [`asyncActionCreator`](#asyncActionCreator)
-  - [`middlewareCreatorFactory`](#asyncReduxMiddlewareCreator)
+  - [`asyncReduxMiddlewareCreator`](#asyncReduxMiddlewareCreator)
   - [`asyncStateReducer`](#asyncStateReducer)
-  - [`isAsynStateSelectorHookCreator`](#useIsAsyncPendingSelector)
+  - [`useIsAsyncPendingSelector`](#useIsAsyncPendingSelector)
   - [`useOnAsyncFulfilled`](#useOnAsyncFulfilled)
   - [`useOnAsyncRejected`](#useOnAsyncRejected)
   - [`fulfilledTypeCreator`](#fulfilledTypeCreator)
@@ -49,10 +49,10 @@ You can play around with the following **example** in [this codesandbox](https:/
 
 ```js
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
-import { middlewareCreatorFactory , asyncStateReducer } from "reasync-hooks";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "reasync-hooks";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const asyncReduxMiddleware = middlewareCreatorFactory();
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator();
 const rootReducer = combineReducers({
   asyncState: asyncStateReducer
 });
@@ -99,7 +99,7 @@ const asyncRejectedAction = asyncActionCreator(
 
 ```jsx
 import {
-  isAsynStateSelectorHookCreator,
+  useIsAsyncPendingSelector,
   useOnAsyncFulfilled,
   useOnAsyncRejected
 } from "reasync-hooks";
@@ -108,10 +108,10 @@ import { Button, message } from "antd";
 
 const BasisExample = () => {
   const dispatch = useDispatch();
-  const isFulfilledActionPending = isAsynStateSelectorHookCreator([
+  const isFulfilledActionPending = useIsAsyncPendingSelector([
     FULFILLED_ACTION
   ]);
-  const isRejectedActionPending = isAsynStateSelectorHookCreator([REJECTED_ACTION]);
+  const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
   //Notify something when async action is from pending to fulfilled
   useOnAsyncFulfilled([FULFILLED_ACTION], asyncType => {
     message.success(asyncType);
@@ -162,9 +162,9 @@ export default App;
 import React from "react";
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import {
-  middlewareCreatorFactory,
+  asyncReduxMiddlewareCreator,
   asyncStateReducer,
-  isAsynStateSelectorHookCreator,
+  useIsAsyncPendingSelector,
   useOnAsyncFulfilled,
   useOnAsyncRejected,
   asyncActionCreator
@@ -178,7 +178,7 @@ import ("./App.css");
 Step 1: create store
  */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const asyncReduxMiddleware = middlewareCreatorFactory();
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator();
 const rootReducer = combineReducers({
   asyncState: asyncStateReducer
 });
@@ -218,10 +218,10 @@ Step 3: use hooks in your component
  */
 const BasisExample = () => {
   const dispatch = useDispatch();
-  const isFulfilledActionPending = isAsynStateSelectorHookCreator([
+  const isFulfilledActionPending = useIsAsyncPendingSelector([
     FULFILLED_ACTION
   ]);
-  const isRejectedActionPending = isAsynStateSelectorHookCreator([REJECTED_ACTION]);
+  const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
   //Notify something when async action is from pending to fulfilled
   useOnAsyncFulfilled([FULFILLED_ACTION], asyncType => {
     message.success(asyncType);
@@ -350,7 +350,7 @@ You can play around with the following **example** in [this codesandbox](https:/
 ##### Customize the redux  middleware
 
 ```jsx
-import { middlewareCreatorFactory , asyncStateReducer } from "reasync-hooks";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "reasync-hooks";
 
 const fulfilledHandler = (resolveValue, action, dispatch) => {
   dispatch({ ...action, data: resolveValue });
@@ -361,7 +361,7 @@ const rejectedHandler = (rejectedReason, action, dispatch) => {
     error: rejectedReason
   });
 };
-const asyncReduxMiddleware = middlewareCreatorFactory(
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator(
   fulfilledHandler,
   rejectedHandler
 );
@@ -438,7 +438,7 @@ const errorReducer = (state = {}, action) => {
 
 ```js
 import { applyMiddleware, combineReducers, createStore, compose } from "redux";
-import { middlewareCreatorFactory , asyncStateReducer } from "reasync-hooks";
+import { asyncReduxMiddlewareCreator , asyncStateReducer } from "reasync-hooks";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const rootReducer = combineReducers({
@@ -458,7 +458,7 @@ export const store = createStore(
 
 ```jsx
 import {
-  isAsynStateSelectorHookCreator,
+  useIsAsyncPendingSelector,
   useOnAsyncFulfilled,
   useOnAsyncRejected
 } from "reasync-hooks";
@@ -468,10 +468,10 @@ import { Button, message } from "antd";
 const AdvancedExample = () => {
   const dispatch = useDispatch();
   const store = useStore();
-  const isFulfilledActionPending = isAsynStateSelectorHookCreator([
+  const isFulfilledActionPending = useIsAsyncPendingSelector([
     FULFILLED_ACTION
   ]);
-  const isRejectedActionPending = isAsynStateSelectorHookCreator([REJECTED_ACTION]);
+  const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
   //Notify data when async action changes from pending to fulfilled
   useOnAsyncFulfilled([FULFILLED_ACTION], () => {
     message.success(store.getState().user.profile.email);
@@ -524,9 +524,9 @@ import { applyMiddleware, combineReducers, createStore, compose } from "redux";
 import {
   fulfilledTypeCreator,
   rejectedTypeCreator,
-  middlewareCreatorFactory,
+  asyncReduxMiddlewareCreator,
   asyncStateReducer,
-  isAsynStateSelectorHookCreator,
+  useIsAsyncPendingSelector,
   useOnAsyncFulfilled,
   useOnAsyncRejected,
   asyncActionCreator
@@ -548,7 +548,7 @@ const rejectedHandler = (rejectedReason, action, dispatch) => {
     error: rejectedReason
   });
 };
-const asyncReduxMiddleware = middlewareCreatorFactory(
+const asyncReduxMiddleware = asyncReduxMiddlewareCreator(
     fulfilledHandler,
     rejectedHandler
 );
@@ -621,10 +621,10 @@ Step 5: use hooks in your component
 const AdvancedExample = () => {
   const dispatch = useDispatch();
   const store = useStore();
-  const isFulfilledActionPending = isAsynStateSelectorHookCreator([
+  const isFulfilledActionPending = useIsAsyncPendingSelector([
     FULFILLED_ACTION
   ]);
-  const isRejectedActionPending = isAsynStateSelectorHookCreator([REJECTED_ACTION]);
+  const isRejectedActionPending = useIsAsyncPendingSelector([REJECTED_ACTION]);
   //Notify data when async action changes from pending to fulfilled
   useOnAsyncFulfilled([FULFILLED_ACTION], () => {
     message.success(store.getState().user.profile.email);
@@ -686,13 +686,13 @@ const asyncAction = () => actionTypeCreator(type, asyncAction, extraArgument)
 
 ​	`asyncAction:{types:[pendingType,fulfilledType,rejectedType],asyncFunction,extraArgument}`
 
-The `reduxMiddleware` that is created by `middlewareCreatorFactory` will **only** response the `action` with a `types` property . In fact, the idea behind `react-redux-async-hooks` is that dispatch a corresponding action(pendingType, fulfilledType, rejectedType) when the **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** that `asyncFunction` returns is in a different state(pending,fulfilled,rejected).
+The `reduxMiddleware` that is created by `asyncReduxMiddlewareCreator` will **only** response the `action` with a `types` property . In fact, the idea behind `react-redux-async-hooks` is that dispatch a corresponding action(pendingType, fulfilledType, rejectedType) when the **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)** that `asyncFunction` returns is in a different state(pending,fulfilled,rejected).
 
 **Note**: `asyncFunction` must be a function that returns a **[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)**.
 
 
 
-### middlewareCreatorFactory
+### asyncReduxMiddlewareCreator
 
 ```js
 const asyncReduxMiddleware = asyncReduxMiddleware(fullfilledHandler, rejectedHandler)
@@ -720,17 +720,17 @@ A [reducer](https://redux.js.org/basics/reducers) that specifies how the applica
 
 
 
-### isAsynStateSelectorHookCreator
+### useIsAsyncPendingSelector
 
 ```js
-const isPending = isAsynStateSelectorHookCreator(actionTypes, asyncStateReducerKey)
+const isPending = useIsAsyncPendingSelector(actionTypes, asyncStateReducerKey)
 ```
 
 #### Parameters
 
 ​	`actionTypes:string[]`: A group of async actions that are kept track of.
 
-​	`asyncStateReducerKey:string="asyncState"` : Under the hood, `isAsynStateSelectorHookCreator` tries to get async action states by
+​	`asyncStateReducerKey:string="asyncState"` : Under the hood, `useIsAsyncPendingSelector` tries to get async action states by
 
 ```js
 //https://react-redux.js.org/api/hooks#useselector
@@ -757,7 +757,7 @@ useOnAsyncFulfilled(actionTypes, handler, asyncStateReducerKey)
 
 ​	`handler:(asyncType)=>void`: Run when any one of  `actionTypes` changes from **pending** to **fulfilled**. The `asyncType` is passed to `handler` is the one that triggers the `handler`.
 
-​	`asyncStateReducerKey:string="asyncState"` : Same with this parameter in `isAsynStateSelectorHookCreator`.
+​	`asyncStateReducerKey:string="asyncState"` : Same with this parameter in `useIsAsyncPendingSelector`.
 
 #### Return
 
@@ -777,7 +777,7 @@ useOnAsyncRejected(actionTypes, handler, asyncStateReducerKey)
 
 ​	`handler:(actionType)=>void`: Run when one of  `actionTypes `changes from **pending** to **rejected**. The `actionType` is passed to `handler` is the one that triggers the `handler`.
 
-​	`asyncStateReducerKey="asyncState"`: Same with this parameter in `isAsynStateSelectorHookCreator`.
+​	`asyncStateReducerKey="asyncState"`: Same with this parameter in `useIsAsyncPendingSelector`.
 
 #### Return
 
@@ -822,3 +822,4 @@ const rejectedType = rejectedTypeCreator(actionType)
 ## License
 
 [MIT]
+
