@@ -1,15 +1,5 @@
-import { useIsAsyncPendingSelector } from "./hooks/useIsAsyncPedningSelector";
-import { asyncStateReducer } from "./asyncStateReducer";
-import { asyncReduxMiddlewareCreator } from "./asyncReduxMiddlewareCreator";
-import { useOnAsyncFulfilled } from "./hooks/useOnAsyncFulfilled";
-import { useOnAsyncRejected } from "./hooks/useOnAsyncRejected";
-import { setConfig } from "./config";
+import { asyncReducerCreator } from "./asyncReducerCreator";
+import { useOnAsyncState } from "./hooks/useOnAsyncState";
+import { useIsAsyncStateSelector } from "./hooks/useIsAsyncStateSelector";
 
-export {
-  asyncStateReducer,
-  useIsAsyncPendingSelector,
-  useOnAsyncFulfilled,
-  useOnAsyncRejected,
-  asyncReduxMiddlewareCreator,
-  setConfig
-};
+export { useOnAsyncState, useIsAsyncStateSelector, asyncReducerCreator };

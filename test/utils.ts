@@ -1,10 +1,10 @@
-import { config } from "../src/config";
+import { FULFILLED, PENDING, REJECTED } from "../src/utils/constant";
 
 export const fulfilledTypeCreator = (type: string): string =>
-  `${type}_${config.suffix.fulfilled}`;
+  `${type}_${FULFILLED}`;
 
 export const rejectedTypeCreator = (type: string): string =>
-  `${type}_${config.suffix.rejected}`;
+  `${type}_${REJECTED}`;
 
 export const pendingTypeCreator = (type: string): string =>
-  `${type}_${config.suffix.pending}`;
+  `${type}_${PENDING}`;

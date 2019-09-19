@@ -1,14 +1,14 @@
-import { applyMiddleware, combineReducers, createStore, Reducer } from "redux";
+import { applyMiddleware, createStore, Reducer } from "redux";
 import * as rtl from "@testing-library/react";
 import {
-  asyncReduxMiddlewareCreator,
-  asyncStateReducer,
+  basisMiddlewareCreator,
+  middlewareCreator,
   useOnAsyncFulfilled
 } from "../../src";
 import { act, renderHook } from "@testing-library/react-hooks";
 import { Provider, useStore } from "react-redux";
 import * as React from "react";
-import { AsyncHandler } from "../../src/asyncReduxMiddlewareCreator";
+import { AsyncHandler } from "../../src/middlewareCreatorFactory";
 import {
   fulfilledTypeCreator,
   pendingTypeCreator,
@@ -29,10 +29,10 @@ describe("React", () => {
 
       it("should call handler when the async action state changes from pending ro fulfilled ", async function() {
         const store = createStore(
-          combineReducers({
-            asyncState: asyncStateReducer
+          ({ count } = { count: -1 }) => ({
+            count: count + 1
           }),
-          applyMiddleware(asyncReduxMiddlewareCreator())
+          applyMiddleware(middlewareCreator(), basisMiddlewareCreator())
         );
         renderHook(
           () => {
@@ -62,7 +62,7 @@ describe("React", () => {
         ) => {
           return dispatch({ ...action, data: resolveValue });
         };
-        const reduxMiddleware = asyncReduxMiddlewareCreator({
+        const reduxMiddleware = middlewareCreator({
           fulfilledHandler
         });
 
@@ -73,9 +73,8 @@ describe("React", () => {
         };
 
         const store = createStore(
-          combineReducers({
-            asyncState: asyncStateReducer,
-            resolve: resolveReducer
+          ({ count } = { count: -1 }) => ({
+            count: count + 1
           }),
           applyMiddleware(reduxMiddleware)
         );
@@ -105,10 +104,11 @@ describe("React", () => {
       it("should not call the handler in other conditions", async function() {
         let count = 0;
         const store = createStore(
-          combineReducers({
-            asyncState: asyncStateReducer
+          ({ count } = { count: -1 }) => ({
+            count: count + 1
           }),
-          applyMiddleware(asyncReduxMiddlewareCreator())
+
+          applyMiddleware(middlewareCreator(), basisMiddlewareCreator())
         );
         renderHook(
           () => {
@@ -143,21 +143,6 @@ describe("React", () => {
           store.dispatch({ type: pendingTypeCreator(actionType) });
         });
         expect(count).toEqual(1);
-      });
-      it("should throw error when asyncStateReducerKey is not same as with the key for asyncReducer in combineReducers", function() {
-        const store = createStore(
-          combineReducers({
-            asyncState: asyncStateReducer
-          }),
-          applyMiddleware(
-            asyncReduxMiddlewareCreator({ asyncStateReducerKey: "wrongKey" })
-          )
-        );
-        const { result } = renderHook(
-          () => useOnAsyncFulfilled([actionType], () => {}),
-          { wrapper: props => <Provider store={store} {...props} /> }
-        );
-        expect(result.error).toBeInstanceOf(Error);
       });
     });
   });

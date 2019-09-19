@@ -1,13 +1,12 @@
 import * as rtl from "@testing-library/react";
 import { applyMiddleware, combineReducers, createStore, Reducer } from "redux";
 import {
-  asyncReduxMiddlewareCreator,
+  middlewareCreatorFactory,
   asyncStateReducer,
   useOnAsyncRejected
 } from "../../src";
 import { act, renderHook } from "@testing-library/react-hooks";
 import { Provider, useStore } from "react-redux";
-import { AsyncHandler } from "../../src/asyncReduxMiddlewareCreator";
 
 import * as React from "react";
 import {
@@ -33,7 +32,7 @@ describe("React", () => {
           combineReducers({
             asyncState: asyncStateReducer
           }),
-          applyMiddleware(asyncReduxMiddlewareCreator())
+          applyMiddleware(middlewareCreatorFactory())
         );
         renderHook(
           () => {
@@ -63,7 +62,7 @@ describe("React", () => {
         ) => {
           return dispatch({ ...action, error: rejectedReason });
         };
-        const reduxMiddleware = asyncReduxMiddlewareCreator({
+        const reduxMiddleware = middlewareCreatorFactory({
           rejectedHandler
         });
 
@@ -110,7 +109,7 @@ describe("React", () => {
           combineReducers({
             asyncState: asyncStateReducer
           }),
-          applyMiddleware(asyncReduxMiddlewareCreator())
+          applyMiddleware(middlewareCreatorFactory())
         );
 
         renderHook(
@@ -147,22 +146,6 @@ describe("React", () => {
           store.dispatch({ type: pendingTypeCreator(actionType) });
         });
         expect(count).toEqual(1);
-      });
-
-      it("should throw error when asyncStateReducerKey is not same as with the key for asyncReducer in combineReducers", function() {
-        const store = createStore(
-          combineReducers({
-            asyncState: asyncStateReducer
-          }),
-          applyMiddleware(
-            asyncReduxMiddlewareCreator({ asyncStateReducerKey: "wrongKey" })
-          )
-        );
-        const { result } = renderHook(
-          () => useOnAsyncRejected([actionType], () => {}),
-          { wrapper: props => <Provider store={store} {...props} /> }
-        );
-        expect(result.error).toBeInstanceOf(Error);
       });
     });
   });
