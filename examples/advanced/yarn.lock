@@ -8967,11 +8967,6 @@ react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-redux-async-hooks@^0.0.1-alpha.3:
-  version "0.0.1-alpha.3"
-  resolved "https://registry.yarnpkg.com/react-redux-async-hooks/-/react-redux-async-hooks-0.0.1-alpha.3.tgz#e9bf54ef5901c0f7a96de4c6fc350077adca0821"
-  integrity sha512-8Cq30d24AVn5FwdbJpeS98JQX79/FY8XFzJPW0+TpPtKElPDs4PHy8tcdgFSPUOdiPAr5V1CGd49dZ90+9SBRA==
-
 react-redux@^7.1.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.1.0.tgz#72af7cf490a74acdc516ea9c1dd80e25af9ea0b2"
@@ -9146,6 +9141,11 @@ realpath-native@^1.1.0:
   integrity sha512-wlgPA6cCIIg9gKz0fgAPjnzh4yR/LnXovwuo9hvyGvx3h8nX4+/iLZplfUWasXpqD8BdnGnP5njOFjkUwPzvjA==
   dependencies:
     util.promisify "^1.0.0"
+
+reasync-hooks@latest:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/reasync-hooks/-/reasync-hooks-0.1.1.tgz#fef9432f5ff6f0e727526fa74f1ebfe3f9be10d9"
+  integrity sha512-lIo5l2UOnWWK65jl6o5nGI2FE1HduNakAzYUfsqJjGLSB76VpthWXTdngKMh3UFdv3vXpQ549qSSJjHtAe7v/Q==
 
 recursive-readdir@2.2.2:
   version "2.2.2"
@@ -10517,9 +10517,9 @@ typedarray@^0.0.6:
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
 ua-parser-js@^0.7.18:
-  version "0.7.20"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.20.tgz#7527178b82f6a62a0f243d1f94fd30e3e3c21098"
-  integrity sha512-8OaIKfzL5cpx8eCMAhhvTlft8GYF8b2eQr6JkCyVdrgjcytyOmPCXrqXFcUnhonRpLlh5yxEZVohm6mzaowUOw==
+  version "0.7.28"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.28.tgz#8ba04e653f35ce210239c64661685bf9121dec31"
+  integrity sha512-6Gurc1n//gjp9eQNXjD9O3M/sMwVtN5S8Lv9bvOYBfKfDNiIIhqiyi01vMBO45u4zkDE420w/e0se7Vs+sIg+g==
 
 uglify-js@3.4.x, uglify-js@^3.1.4:
   version "3.4.9"
